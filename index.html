@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interaktiivinen sähkö- ja automaatiotekniikan harjoitteluympäristö.">
+  <title>Virtapiiri — sähkö- ja automaatiotekniikan harjoittelu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#" data-view-link="home" aria-label="Virtapiiri, etusivu">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>VIRTAPIIRI</span>
+    </a>
+    <nav class="main-nav" aria-label="Päänavigaatio">
+      <button class="nav-link active" data-view="home">Etusivu</button>
+      <button class="nav-link" data-view="practice">Harjoittelu</button>
+      <button class="nav-link" data-view="flashcards">Flashcards</button>
+      <button class="nav-link" data-view="formulas">Kaavapankki</button>
+      <button class="nav-link" data-view="games">Minipelit</button>
+      <button class="nav-link" data-view="sources">Lähteet</button>
+    </nav>
+    <button class="progress-pill" data-view="progress" aria-label="Näytä edistyminen">
+      <span class="pulse-dot"></span>
+      <span><b id="headerStreak">0</b> tehtävää tänään</span>
+    </button>
+  </header>
+
+  <main>
+    <section id="homeView" class="view active" aria-labelledby="heroTitle">
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow"><span>01</span> INSINÖÖRIN HARJOITTELUALUSTA</div>
+          <h1 id="heroTitle">Ymmärrä.<br><em>Laske.</em> Hallitse.</h1>
+          <p>Opiskele sähkö- ja automaatiotekniikkaa tavoitteellisesti — perusteista aina maisteritasolle asti.</p>
+          <div class="hero-actions">
+            <button class="btn primary" data-view="practice">Aloita harjoitus <span>↗</span></button>
+            <button class="btn ghost" data-view="flashcards">Kertaa korteilla <span>→</span></button>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <svg viewBox="0 0 560 390" role="presentation">
+            <defs>
+              <linearGradient id="wire" x1="0" x2="1">
+                <stop offset="0" stop-color="#3b82f6" stop-opacity=".1"/>
+                <stop offset=".5" stop-color="#7877ff"/>
+                <stop offset="1" stop-color="#a855f7" stop-opacity=".25"/>
+              </linearGradient>
+              <filter id="glow"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <path class="circuit-line" d="M35 195H125L155 115H240L270 195H360L390 90H510"/>
+            <path class="circuit-line faint" d="M35 250H105L145 325H285L310 250H510"/>
+            <circle cx="155" cy="115" r="7"/><circle cx="270" cy="195" r="7"/><circle cx="390" cy="90" r="7"/><circle cx="310" cy="250" r="7"/>
+            <g transform="translate(208 135)" filter="url(#glow)">
+              <circle class="orbital" cx="70" cy="60" r="98"/>
+              <circle class="orbital tilted" cx="70" cy="60" r="70"/>
+              <path class="bolt" d="M77 2L35 71h36l-9 49 46-70H74z"/>
+            </g>
+          </svg>
+          <div class="formula-chip chip-one">U = R · I</div>
+          <div class="formula-chip chip-two">F = m · a</div>
+          <div class="formula-chip chip-three">z = a + bi</div>
+        </div>
+      </div>
+
+      <section class="status-strip" aria-label="Alustan ominaisuudet">
+        <div><strong>12</strong><span>harjoiteltavaa aihetta</span></div>
+        <div><strong>4</strong><span>vaikeustasoa</span></div>
+        <div><strong>5</strong><span>tenttimuotoa</span></div>
+        <div><strong>∞</strong><span>muuntuvaa tehtävää</span></div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-heading">
+          <div><span class="kicker">VALITSE REITTISI</span><h2>Harjoittele aihealueittain</h2></div>
+          <button class="text-link" data-view="practice">Yhdistä kaikki aiheet <span>↗</span></button>
+        </div>
+        <div id="domainGrid" class="domain-grid"></div>
+      </section>
+
+      <section class="content-section games-intro">
+        <div class="section-heading">
+          <div><span class="kicker">NOPEA KERTAUS</span><h2>Kolme minipeliä termeille</h2></div>
+          <button class="text-link" data-view="games">Avaa pelihalli <span>↗</span></button>
+        </div>
+        <div class="game-teaser-grid">
+          <button data-game-jump="rapid"><span>10 × 10 s</span><b>Rapid</b><small>Tunnista termi ennen kuin aika loppuu.</small></button>
+          <button data-game-jump="memory"><span>6 PARIA</span><b>Muistipeli</b><small>Yhdistä käsite ja oikea selitys.</small></button>
+          <button data-game-jump="hangman"><span>6 VIRHETTÄ</span><b>Hirsipuu</b><small>Päättele termi ja kirjoita se näppäimistöllä.</small></button>
+        </div>
+      </section>
+
+      <section class="focus-band">
+        <div>
+          <span class="kicker">VALMIS TESTAAMAAN?</span>
+          <h2>Rakenna oma harjoitustentti.</h2>
+          <p>Rajaa aiheet, painota heikkoja kohtia ja valitse sopiva vaikeustaso.</p>
+        </div>
+        <button class="btn light" data-view="practice">Rakenna tentti <span>→</span></button>
+      </section>
+    </section>
+
+    <section id="practiceView" class="view" aria-labelledby="practiceTitle">
+      <div class="page-head">
+        <span class="kicker">HARJOITTELU</span>
+        <h1 id="practiceTitle">Rakenna oma harjoitus</h1>
+        <p>Valitse kokonaisuus, rytmi ja tavoitetaso. Voit vielä rajata tai painottaa aiheita ennen aloitusta.</p>
+      </div>
+
+      <div id="setupPanel" class="setup-layout">
+        <section class="setup-main">
+          <div class="step-block">
+            <div class="step-label"><span>01</span><div><b>Harjoituksen muoto</b><small>Valitse vapaaharjoittelu tai valmis tenttirakenne</small></div></div>
+            <div class="choice-row mode-row" role="radiogroup" aria-label="Harjoituksen muoto">
+              <button class="choice-card selected" data-mode="practice"><b>Vapaaharjoittelu</b><span>10 tehtävää · oma aihevalinta</span></button>
+              <button class="choice-card" data-mode="exam"><b>Harjoitustentti</b><span>8–50 tehtävää · määritelty rakenne</span></button>
+              <button class="choice-card" data-mode="review"><b>Kertaus</b><span id="reviewModeCopy">Aiemmin väärin menneet tehtävät</span></button>
+            </div>
+          </div>
+
+          <div id="examLengths" class="step-block hidden">
+            <div class="step-label"><span>02</span><div><b>Tentin pituus</b><small>Tehtävätyypit jakautuvat automaattisesti</small></div></div>
+            <div class="exam-grid" role="radiogroup" aria-label="Tentin pituus">
+              <button class="exam-card selected" data-length="8"><span class="exam-tag">NOPEA</span><strong>8</strong><b>kysymystä</b><small>8 monivalintaa</small></button>
+              <button class="exam-card" data-length="15"><span class="exam-tag">KESKIPITKÄ</span><strong>15</strong><b>kysymystä</b><small>5 monivalintaa · 10 avointa</small></button>
+              <button class="exam-card" data-length="25"><span class="exam-tag">PITKÄ</span><strong>25</strong><b>kysymystä</b><small>6 monivalintaa (~25 %) · 19 avointa</small></button>
+              <button class="exam-card master" data-length="30"><span class="exam-tag">MESTARITENTTI</span><strong>30</strong><b>kysymystä</b><small>Erittäin haastava · 6 monivalintaa</small></button>
+              <button class="exam-card" data-length="50"><span class="exam-tag">LAAJA</span><strong>50</strong><b>kysymystä</b><small>10 monivalintaa · 40 avointa</small></button>
+            </div>
+            <label id="timerOption" class="timer-toggle hidden"><input id="timerEnabled" type="checkbox"><span class="toggle-ui"></span><span><b>Suorita aikarajalla</b><small id="timerCopy">55 minuuttia</small></span></label>
+          </div>
+
+          <div class="step-block">
+            <div class="step-label"><span id="difficultyStep">02</span><div><b>Vaikeustaso</b><small>Valitse tämänhetkiseen tavoitteeseesi sopiva taso</small></div></div>
+            <div class="difficulty-row" role="radiogroup" aria-label="Vaikeustaso">
+              <button class="difficulty-card selected" data-difficulty="easy"><span>PERUSTA</span><b>Helppo</b><small>Lukion matematiikan, kemian ja fysiikan taso</small></button>
+              <button class="difficulty-card" data-difficulty="medium"><span>INSINÖÖRI</span><b>Keskivaikea</b><small>AMK-insinööriopintojen läpäisytaso</small></button>
+              <button class="difficulty-card" data-difficulty="hard"><span>SYVENTÄVÄ</span><b>Vaikea</b><small>Vahva pohja maisteriopintoihin</small></button>
+              <button class="difficulty-card extreme" data-difficulty="extreme"><span>TENTTIVARMA</span><b>Erittäin haastava</b><small>Jos hallitset nämä, olet valmis vaativaan tenttiin</small></button>
+            </div>
+          </div>
+
+          <div class="step-block">
+            <div class="step-label"><span id="topicsStep">03</span><div><b>Aiheet ja painotukset</b><small>Poista aihe valinnasta tai painota sitä tähdellä</small></div></div>
+            <div class="topic-tools"><button id="selectAllTopics" class="mini-link">Valitse kaikki</button><button id="clearTopics" class="mini-link">Tyhjennä</button></div>
+            <div id="topicSelector" class="topic-selector"></div>
+          </div>
+        </section>
+
+        <aside class="setup-summary">
+          <span class="kicker">YHTEENVETO</span>
+          <h3 id="summaryTitle">Vapaaharjoittelu</h3>
+          <dl>
+            <div><dt>Tehtäviä</dt><dd id="summaryCount">10</dd></div>
+            <div><dt>Taso</dt><dd id="summaryDifficulty">Helppo</dd></div>
+            <div><dt>Aikaraja</dt><dd id="summaryTimer">Ei</dd></div>
+            <div><dt>Aiheet</dt><dd id="summaryTopics">11 / 11</dd></div>
+          </dl>
+          <div class="summary-note"><span>i</span><p>Monivalinta: enintään 2 p ja kaksi yritystä. Avoin tehtävä: enintään 3 p ja kolme yritystä. Vihje tai kaavapankki pienentää saatavaa pistemäärää.</p></div>
+          <button id="startSession" class="btn primary full">Aloita harjoitus <span>↗</span></button>
+          <p id="setupError" class="setup-error" role="alert"></p>
+        </aside>
+      </div>
+
+      <section id="quizPanel" class="quiz-shell hidden" aria-live="polite">
+        <div class="quiz-topbar">
+          <button id="quitQuiz" class="icon-btn" aria-label="Keskeytä harjoitus">×</button>
+          <div class="quiz-progress-wrap"><div class="quiz-meta"><span id="quizCounter">Tehtävä 1 / 10</span><span id="quizScore">0 oikein</span></div><div class="progress-track"><i id="quizProgress"></i></div></div>
+          <button id="quizFormulaButton" class="formula-access">∑ Kaavapankki</button>
+          <div id="quizTimer" class="quiz-timer hidden">55:00</div>
+        </div>
+        <article class="question-card">
+          <div class="question-tags"><span id="questionTopic">Tasasähköpiirit</span><span id="questionDifficulty">Helppo</span><span id="questionPoints">3 p</span></div>
+          <h2 id="questionText"></h2>
+          <p id="questionContext" class="question-context"></p>
+          <div id="answerArea" class="answer-area"></div>
+          <div id="feedback" class="feedback hidden"></div>
+          <div id="formulaBox" class="formula-box hidden"><span>Tarvittava kaava</span><strong id="formulaText"></strong></div>
+          <div class="question-actions">
+            <button id="hintButton" class="hint-btn"><span>✦</span> Vinkki</button>
+            <button id="checkAnswer" class="btn primary">Tarkista vastaus</button>
+            <button id="nextQuestion" class="btn primary hidden">Seuraava tehtävä <span>→</span></button>
+          </div>
+          <div id="hintPopover" class="hint-popover hidden" role="status"><b>Pieni sysäys</b><p id="hintText"></p></div>
+        </article>
+      </section>
+
+      <section id="resultsPanel" class="results-panel hidden">
+        <span class="result-orbit" aria-hidden="true">✓</span>
+        <span class="kicker">HARJOITUS VALMIS</span>
+        <h2 id="resultHeadline">Hyvä työ!</h2>
+        <p id="resultCopy"></p>
+        <div class="result-score"><strong id="resultPercent">0%</strong><span id="resultFraction">0 / 0 pistettä</span></div>
+        <div id="resultBreakdown" class="result-breakdown"></div>
+        <div class="result-actions"><button id="retrySession" class="btn primary">Harjoittele uudelleen</button><button class="btn ghost" data-view="home">Palaa etusivulle</button></div>
+      </section>
+    </section>
+
+    <section id="formulasView" class="view" aria-labelledby="formulasTitle">
+      <div class="page-head compact">
+        <span class="kicker">KAAVAPANKKI</span>
+        <h1 id="formulasTitle">Kaavat yhdellä silmäyksellä</h1>
+        <p>Rajaa aihealueeseen tai etsi suureen nimellä. Symbolien selitykset auttavat valitsemaan oikean kaavan.</p>
+      </div>
+      <div class="formula-tools"><input id="formulaSearch" type="search" placeholder="Etsi kaavaa, suuretta tai symbolia…" aria-label="Etsi kaavapankista"><select id="formulaFilter" aria-label="Rajaa kaavapankkia"><option value="all">Kaikki aihealueet</option></select></div>
+      <div id="formulaGrid" class="formula-grid"></div>
+    </section>
+
+    <section id="gamesView" class="view" aria-labelledby="gamesTitle">
+      <div class="page-head compact">
+        <span class="kicker">MINIPELIT</span>
+        <h1 id="gamesTitle">Pelihalli</h1>
+        <p>Kertaa käsitteet nopeudella, muistilla tai päättelyllä. Pelitulokset tallentuvat tähän selaimeen.</p>
+      </div>
+      <div class="game-tabs" role="tablist" aria-label="Valitse minipeli">
+        <button class="game-tab active" data-game="rapid">Rapid <span>10 × 10 s</span></button>
+        <button class="game-tab" data-game="memory">Muistipeli <span>6 paria</span></button>
+        <button class="game-tab" data-game="hangman">Hirsipuu <span>termin arvaus</span></button>
+      </div>
+      <div class="game-shell">
+        <section id="rapidGame" class="game-panel active">
+          <div id="rapidIntro" class="game-intro"><span class="game-number">01</span><h2>Rapid</h2><p>Kymmenen termin monivalinta. Jokaisessa tehtävässä on 10 sekuntia. Mitä nopeammin vastaat oikein, sitä enemmän pisteitä saat.</p><div class="speed-scale"><span>&lt; 1 s <b>5 p</b></span><span>&lt; 3 s <b>4 p</b></span><span>&lt; 5 s <b>3 p</b></span><span>muuten <b>2 p</b></span></div><button id="startRapid" class="btn primary">Käynnistä Rapid</button></div>
+          <div id="rapidPlay" class="hidden"><div class="rapid-head"><span id="rapidCount">1 / 10</span><strong id="rapidScore">0 p</strong></div><div class="rapid-clock"><i id="rapidClockBar"></i></div><p class="rapid-label">MIKÄ TERMI SOPII SELITYKSEEN?</p><h2 id="rapidDefinition"></h2><div id="rapidOptions" class="rapid-options"></div></div>
+          <div id="rapidResult" class="game-result hidden"></div>
+        </section>
+        <section id="memoryGame" class="game-panel">
+          <div class="game-panel-head"><div><span class="game-number">02</span><h2>Muistipeli</h2><p>Yhdistä kuusi termiä niiden selityksiin mahdollisimman vähillä siirroilla.</p></div><button id="resetMemory" class="btn ghost">Uusi peli</button></div>
+          <div class="memory-meta"><span id="memoryMoves">0 siirtoa</span><span id="memoryPairs">0 / 6 paria</span></div><div id="memoryGrid" class="memory-grid"></div>
+        </section>
+        <section id="hangmanGame" class="game-panel">
+          <div class="hangman-layout"><div class="gallows"><svg viewBox="0 0 240 260" aria-label="Hirsipuun tilanne"><path class="g-base" d="M25 235H215M60 235V25H160M60 60L95 25M160 25V58"/><circle class="g-part" data-part="1" cx="160" cy="82" r="24"/><path class="g-part" data-part="2" d="M160 106V166"/><path class="g-part" data-part="3" d="M160 120L125 145"/><path class="g-part" data-part="4" d="M160 120L195 145"/><path class="g-part" data-part="5" d="M160 166L132 210"/><path class="g-part" data-part="6" d="M160 166L188 210"/></svg><span id="hangMistakes">0 / 6 virhettä</span></div><div class="hang-content"><span class="game-number">03</span><h2>Hirsipuu</h2><p class="hang-rule">Kirjoita selitystä vastaava kokonainen termi. Jokainen väärä termi piirtää uuden osan, ja uusi selitys tulee jokaisen vastauksen jälkeen.</p><p id="hangDefinition" class="hang-definition"></p><div id="hangWord" class="hang-word"></div><form id="hangForm"><label for="hangInput">Kirjoita koko termi näppäimistöllä</label><div><input id="hangInput" autocomplete="off" maxlength="40" aria-label="Kirjoita koko termi"><button class="btn primary" type="submit">Vastaa</button></div></form><div id="hangUsed" class="hang-used"></div><p id="hangMessage" class="hang-message" aria-live="polite"></p><div id="hangKeyboard" class="hang-keyboard hidden"></div></div></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="flashcardsView" class="view" aria-labelledby="flashTitle">
+      <div class="page-head compact">
+        <span class="kicker">FLASHCARDS</span>
+        <h1 id="flashTitle">Keskeiset käsitteet haltuun</h1>
+        <p>Käännä kortti klikkaamalla tai välilyönnillä. Merkitse kortit kerrattaviksi tai osatuiksi.</p>
+      </div>
+      <div class="flash-layout">
+        <aside class="flash-sidebar">
+          <label for="flashFilter">Rajaa aiheeseen</label>
+          <select id="flashFilter"><option value="all">Kaikki aiheet</option></select>
+          <div class="flash-stats"><div><strong id="flashKnown">0</strong><span>osattu</span></div><div><strong id="flashRemaining">0</strong><span>jäljellä</span></div></div>
+          <button id="resetCards" class="mini-link">Nollaa korttien edistyminen</button>
+        </aside>
+        <div class="flash-stage">
+          <div id="flashCard" class="flash-card" tabindex="0" role="button" aria-label="Käännä kortti">
+            <div class="flash-face front"><span id="flashTopic"></span><small>KÄSITE</small><h2 id="flashTerm"></h2><div class="flip-label">Käännä kortti <span>↻</span></div></div>
+            <div class="flash-face back"><span id="flashBackTopic"></span><small>SELITYS</small><p id="flashDefinition"></p><div class="flip-label">Takaisin <span>↻</span></div></div>
+          </div>
+          <div class="flash-controls"><button id="cardAgain" class="btn ghost">↺ Kertaa vielä</button><span id="flashCounter">1 / 1</span><button id="cardKnown" class="btn primary">Osaan tämän ✓</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="progressView" class="view" aria-labelledby="progressTitle">
+      <div class="page-head compact"><span class="kicker">EDISTYMINEN</span><h1 id="progressTitle">Oppimisen tilannekuva</h1><p>Tulokset tallentuvat vain tähän selaimeen.</p></div>
+      <div id="progressDashboard" class="progress-dashboard"></div>
+    </section>
+
+    <section id="sourcesView" class="view" aria-labelledby="sourcesTitle">
+      <div class="page-head compact"><span class="kicker">LÄHTEET</span><h1 id="sourcesTitle">Jatka syvemmälle</h1><p>Tehtävät ovat tätä sivustoa varten kirjoitettuja. Alla olevat Finna-tietueet auttavat löytämään täydentävää opiskelumateriaalia kirjastoista.</p></div>
+      <div class="source-list">
+        <a href="https://www.finna.fi/Record/savonia.991699016406248?checkRoute=1" target="_blank" rel="noopener"><span>01</span><div><b>Tekniikan fysiikka 2</b><small>Sähkökentät, tasasähkö, magneettikentät, vaihtosähkö ja lämpöoppi</small></div><i>↗</i></a>
+        <a href="https://kansalliskirjasto.finna.fi/Record/vaari.979301" target="_blank" rel="noopener"><span>02</span><div><b>Tekniikan fysiikka 1</b><small>Mekaniikka, lämpöoppi ja insinööriopintojen fysiikan perusteet</small></div><i>↗</i></a>
+        <a href="https://www.finna.fi/Record/piki.388545" target="_blank" rel="noopener"><span>03</span><div><b>Insinöörikoulutuksen fysiikka 1</b><small>Vektorit, liikeoppi, voima, kitka, energia ja SI-järjestelmä</small></div><i>↗</i></a>
+      </div>
+      <div class="source-note"><b>Huomio opiskelijalle</b><p>Sivusto on itsenäiseen harjoitteluun, ei virallinen oppikirja. Tarkista merkintätavat, yksiköt ja kurssikohtaiset menetelmät aina oman oppilaitoksesi aineistosta.</p></div>
+    </section>
+  </main>
+
+  <div id="formulaDrawer" class="formula-drawer hidden" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <button id="closeFormulaDrawer" class="drawer-close" aria-label="Sulje kaavapankki">×</button>
+    <span class="kicker">TEHTÄVÄN AIKAINEN APU</span><h2 id="drawerTitle">Kaavapankki</h2>
+    <p class="drawer-note">Kaavapankin avaaminen merkitään avun käytöksi ja vaikuttaa tämän tehtävän pisteisiin.</p>
+    <div id="drawerFormulas" class="drawer-formulas"></div>
+  </div>
+  <div id="drawerBackdrop" class="drawer-backdrop hidden"></div>
+
+  <footer><span>VIRTAPIIRI / OPPIMISYMPÄRISTÖ</span><span>Rakennettu uteliaisuudelle ja oivalluksille.</span></footer>
+  <script src="app.js"></script>
+</body>
+</html>
+
