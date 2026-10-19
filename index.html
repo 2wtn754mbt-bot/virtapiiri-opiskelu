@@ -224,7 +224,23 @@
         <h1 id="formulasTitle">Kaavat yhdellä silmäyksellä</h1>
         <p>Rajaa aihealueeseen tai etsi suureen nimellä. Symbolien selitykset auttavat valitsemaan oikean kaavan.</p>
       </div>
-      <div class="formula-tools"><input id="formulaSearch" type="search" placeholder="Etsi kaavaa, suuretta tai symbolia…" aria-label="Etsi kaavapankista"><select id="formulaFilter" aria-label="Rajaa kaavapankkia"><option value="all">Kaikki aihealueet</option></select></div>
+      <div class="formula-tools">
+        <div class="formula-search-field">
+          <label for="formulaSearch">Hae kaavapankista</label>
+          <div class="formula-search-input"><span aria-hidden="true">⌕</span><input id="formulaSearch" type="search" placeholder="Esim. kitka, Newton, v = v₀ + at tai µ…" autocomplete="off" aria-describedby="formulaSearchHelp"><button id="formulaClear" class="formula-clear hidden" type="button" aria-label="Tyhjennä kaavahaku">×</button><kbd>/</kbd></div>
+          <small id="formulaSearchHelp">Haku tunnistaa kaavan nimen, symbolit, suureet ja aihealueen.</small>
+        </div>
+        <label class="formula-filter-label" for="formulaFilter">Aihealue<select id="formulaFilter"><option value="all">Kaikki aihealueet</option></select></label>
+      </div>
+      <div class="formula-search-meta">
+        <div class="formula-quick-search" aria-label="Kaavapankin pikahaut">
+          <button type="button" data-formula-query="kinematiikka">Kinematiikka</button>
+          <button type="button" data-formula-query="Newton">Newton</button>
+          <button type="button" data-formula-query="massa paino">Massa &amp; paino</button>
+          <button type="button" data-formula-query="kitka">Kitka</button>
+        </div>
+        <p id="formulaResultCount" aria-live="polite"></p>
+      </div>
       <div id="formulaGrid" class="formula-grid"></div>
     </section>
 
