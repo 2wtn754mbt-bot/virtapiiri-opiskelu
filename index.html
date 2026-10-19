@@ -323,6 +323,38 @@
   </div>
   <div id="drawerBackdrop" class="drawer-backdrop hidden"></div>
 
+  <aside class="achievement-rail" aria-label="Saavutukset">
+    <button id="openAchievements" type="button" aria-haspopup="dialog" aria-controls="achievementDrawer">
+      <span class="achievement-rail-icon" aria-hidden="true">♜</span>
+      <span class="achievement-rail-copy"><b>Saavutukset</b><small id="achievementRailCount">0 / 0</small></span>
+    </button>
+  </aside>
+
+  <div id="achievementBackdrop" class="achievement-backdrop hidden"></div>
+  <aside id="achievementDrawer" class="achievement-drawer hidden" role="dialog" aria-modal="true" aria-labelledby="achievementTitle">
+    <button id="closeAchievements" class="achievement-close" type="button" aria-label="Sulje saavutukset">×</button>
+    <header class="achievement-head">
+      <span class="kicker">OPPIMISMATKASI</span>
+      <h2 id="achievementTitle">Saavutukset</h2>
+      <p>Suoritukset tallentuvat tähän selaimeen. Jatka harjoittelua ja avaa kaikki tasot.</p>
+      <div class="achievement-summary">
+        <div class="achievement-progress-ring"><strong id="achievementPercent">0%</strong><span>avattu</span></div>
+        <div><span>TÄMÄNHETKINEN PUTKI</span><strong id="achievementStreak">1 päivä</strong><small id="achievementSummaryCount">0 / 0 saavutusta</small></div>
+      </div>
+      <div class="achievement-progress-track" aria-hidden="true"><i id="achievementProgressBar"></i></div>
+    </header>
+    <nav class="achievement-filters" aria-label="Rajaa saavutuksia">
+      <button class="active" type="button" data-achievement-filter="all">Kaikki</button>
+      <button type="button" data-achievement-filter="bronze">Pronssi</button>
+      <button type="button" data-achievement-filter="silver">Hopea</button>
+      <button type="button" data-achievement-filter="gold">Kulta</button>
+      <button type="button" data-achievement-filter="diamond">Timantti</button>
+    </nav>
+    <div id="achievementsGrid" class="achievements-grid"></div>
+  </aside>
+
+  <div id="achievementToastRegion" class="achievement-toast-region" aria-live="polite" aria-atomic="false"></div>
+
   <footer><span>VIRTAPIIRI / OPPIMISYMPÄRISTÖ</span><span>Rakennettu uteliaisuudelle ja oivalluksille.</span></footer>
   <script src="app.js"></script>
 </body>
