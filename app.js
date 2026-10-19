@@ -54,17 +54,37 @@
     { topic: 'functions', title: 'Suoran kulmakerroin', formula: 'k = (y₂−y₁)/(x₂−x₁)', symbols: 'Kahden pisteen kautta kulkevalle suoralle' },
     { topic: 'functions', title: 'Eksponentiaalinen malli', formula: 'y(t) = y₀eᵏᵗ', symbols: 'y₀ alkuarvo, k suhteellinen kasvukerroin' },
     { topic: 'kinematics', title: 'Keskinopeus', formula: 'v̄ = Δx / Δt', symbols: 'Δx siirtymä [m], Δt aika [s]' },
+    { topic: 'kinematics', title: 'Keskivauhti', formula: 'ū = s / Δt', symbols: 's kuljettu matka [m], Δt kokonaisaika [s]; keskivauhti ei huomioi suuntaa' },
     { topic: 'kinematics', title: 'Keskikiihtyvyys', formula: 'ā = Δv / Δt', symbols: 'Δv nopeuden muutos [m/s]' },
-    { topic: 'kinematics', title: 'Vakiokiihtyvä liike', formula: 'v = v₀ + at,  x = v₀t + ½at²', symbols: 'Kaavat pätevät, kun kiihtyvyys on vakio' },
+    { topic: 'kinematics', title: 'Hetkellinen nopeus', formula: 'v(t) = dx/dt', symbols: 'Paikka-aikakuvaajan tangentin kulmakerroin' },
+    { topic: 'kinematics', title: 'Hetkellinen kiihtyvyys', formula: 'a(t) = dv/dt = d²x/dt²', symbols: 'Nopeus-aikakuvaajan tangentin kulmakerroin' },
+    { topic: 'kinematics', title: 'Nopeus vakiokiihtyvässä liikkeessä', formula: 'v = v₀ + at', symbols: 'v₀ alkunopeus, a vakio kiihtyvyys, t aika' },
+    { topic: 'kinematics', title: 'Paikka vakiokiihtyvässä liikkeessä', formula: 'x = x₀ + v₀t + ½at²', symbols: 'x₀ alkupaikka; ilman alkupaikkaa siirtymä Δx = v₀t + ½at²' },
+    { topic: 'kinematics', title: 'Ajaton liikeyhtälö', formula: 'v² = v₀² + 2aΔx', symbols: 'Yhdistää nopeuden ja siirtymän ilman aikaa' },
     { topic: 'kinematics', title: 'Keskinopeus vakiokiihtyvässä liikkeessä', formula: 'v̄ = ½(v₀ + v)', symbols: 'v₀ alkunopeus, v loppunopeus' },
+    { topic: 'kinematics', title: 'Siirtymä nopeuskuvaajasta', formula: 'Δx = ∫v(t)dt', symbols: 'v(t)-kuvaajan etumerkillinen pinta-ala aikavälillä' },
+    { topic: 'kinematics', title: 'Vapaa putoaminen', formula: 'aᵧ = −g,  g ≈ 9,81 m/s²', symbols: 'Positiivinen y-suunta on valittu ylöspäin; ilmanvastus sivuutetaan' },
     { topic: 'dynamics', title: 'Liikemäärä ja impulssi', formula: 'p = mv,  J = Δp = FΔt', symbols: 'p liikemäärä, J impulssi' },
     { topic: 'dynamics', title: 'Liike-energia', formula: 'Eₖ = ½mv²', symbols: 'm massa [kg], v nopeus [m/s]' },
     { topic: 'force-motion', title: 'Newtonin toinen laki', formula: 'ΣF = ma', symbols: 'Kokonaisvoima määrää kiihtyvyyden' },
+    { topic: 'force-motion', title: 'Tasapainoehto', formula: 'ΣF = 0 ⇔ a = 0', symbols: 'Kappale on levossa tai liikkuu vakionopeudella' },
+    { topic: 'force-motion', title: 'Liikeyhtälö komponenteittain', formula: 'ΣFₓ = maₓ,  ΣFᵧ = maᵧ', symbols: 'Newtonin toinen laki kirjoitetaan erikseen jokaisessa koordinaattisuunnassa' },
     { topic: 'force-motion', title: 'Tasaisesti kiihtyvä liike', formula: 'v = v₀ + at,  s = v₀t + ½at²', symbols: 'v nopeus, a kiihtyvyys, s matka' },
     { topic: 'force-motion', title: 'Voiman komponentit', formula: 'Fₓ = F cosθ,  Fᵧ = F sinθ', symbols: 'θ kulma positiivisesta x-suunnasta' },
+    { topic: 'force-motion', title: 'Painon komponentit kaltevalla tasolla', formula: 'G∥ = mg sinθ,  G⊥ = mg cosθ', symbols: 'G∥ on tason suuntainen ja G⊥ tasoa vastaan kohtisuora komponentti' },
+    { topic: 'force-motion', title: 'Hissin vaijerivoima ylöspäin kiihdytettäessä', formula: 'T = m(g + a)', symbols: 'T vaijerin jännitys, kun kiihtyvyys on ylöspäin' },
+    { topic: 'force-motion', title: 'Hissin vaijerivoima alaspäin kiihdytettäessä', formula: 'T = m(g − a)', symbols: 'a on alaspäin suuntautuvan kiihtyvyyden suuruus' },
     { topic: 'mass-weight', title: 'Painovoima', formula: 'G = mg', symbols: 'm massa [kg], g ≈ 9,81 m/s², G painovoima [N]' },
+    { topic: 'mass-weight', title: 'Massa Newtonin toisesta laista', formula: 'm = ΣF / a', symbols: 'Massa kuvaa kappaleen hitautta; m [kg], F [N], a [m/s²]' },
+    { topic: 'mass-weight', title: 'Näennäinen paino', formula: 'W = N tai W = T', symbols: 'Vaaka tai ripustus ilmoittaa tukivoiman N tai jännitysvoiman T, ei aina arvoa mg' },
+    { topic: 'mass-weight', title: 'Tukivoima vaakatasolla', formula: 'N = mg', symbols: 'Pätee vain, kun muita pystysuuntaisia voimia tai pystysuuntaista kiihtyvyyttä ei ole' },
+    { topic: 'friction', title: 'Lepokitkan vaihteluväli', formula: '0 ≤ fₛ ≤ µₛN', symbols: 'Lepokitka mukautuu tarpeeseen; yläraja saavutetaan juuri ennen liukumista' },
     { topic: 'friction', title: 'Maksimilepokitka', formula: 'fₛ,max = µₛN', symbols: 'Lepokitka mukautuu välille 0…µₛN' },
     { topic: 'friction', title: 'Liikekitka', formula: 'fₖ = µₖN', symbols: 'µₖ liikekitkakerroin, N normaalivoima' },
+    { topic: 'friction', title: 'Normaalivoima alaviistoon työnnettäessä', formula: 'N = mg + F sinθ', symbols: 'Voiman alaspäin suuntautuva komponentti lisää normaalivoimaa ja kitkaa' },
+    { topic: 'friction', title: 'Normaalivoima ylöspäin vedettäessä', formula: 'N = mg − F sinθ', symbols: 'Voiman ylöspäin suuntautuva komponentti pienentää normaalivoimaa ja kitkaa' },
+    { topic: 'friction', title: 'Kitkakulma', formula: 'tanθ = µ', symbols: 'Liukumisen rajakulma ideaalissa Coulombin kitkamallissa' },
+    { topic: 'friction', title: 'Liukuvan kappaleen kiihtyvyys vaakatasolla', formula: 'a = (F − µₖN) / m', symbols: 'F on liikkeen suuntainen vetävä voima; kitka vaikuttaa vastakkaiseen suuntaan' },
     { topic: 'thermal', title: 'Lämpömäärä', formula: 'Q = mcΔT', symbols: 'm massa, c ominaislämpökapasiteetti, ΔT lämpötilan muutos' },
     { topic: 'thermal', title: 'Lämpölaajeneminen', formula: 'ΔL = αL₀ΔT', symbols: 'α pituuden lämpötilakerroin' },
     { topic: 'thermal', title: 'Carnot-hyötysuhde', formula: 'η = 1 − T_c/T_h', symbols: 'Lämpötilat kelvineinä' },
@@ -819,15 +839,29 @@
     return '<article class="formula-card"><span>' + topics[f.topic].name + '</span><h3>' + f.formula + '</h3><b>' + f.title + '</b><p>' + f.symbols + '</p></article>';
   }
 
+  function normalizeFormulaSearch(value) {
+    return String(value || '').toLocaleLowerCase('fi-FI')
+      .replace(/[µμ]/g, ' mu ')
+      .replace(/[Σσς]/g, ' summa ')
+      .replace(/[Δδ]/g, ' delta ')
+      .replace(/[₀⁰]/g, '0').replace(/[₁¹]/g, '1').replace(/[₂²]/g, '2').replace(/[₃³]/g, '3')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9åäö]+/g, ' ').trim();
+  }
+
   function renderFormulaBank() {
-    var query = (byId('formulaSearch').value || '').toLocaleLowerCase('fi-FI');
+    var query = normalizeFormulaSearch(byId('formulaSearch').value);
+    var queryParts = query ? query.split(/\s+/) : [];
     var filter = byId('formulaFilter').value;
     var list = formulas.filter(function (f) {
       var matchesTopic = filter === 'all' || f.topic === filter;
-      var haystack = (f.title + ' ' + f.formula + ' ' + f.symbols + ' ' + topics[f.topic].name).toLocaleLowerCase('fi-FI');
-      return matchesTopic && haystack.indexOf(query) !== -1;
+      var haystack = normalizeFormulaSearch(f.title + ' ' + f.formula + ' ' + f.symbols + ' ' + topics[f.topic].name);
+      return matchesTopic && queryParts.every(function (part) { return haystack.indexOf(part) !== -1; });
     });
-    byId('formulaGrid').innerHTML = list.length ? list.map(formulaCard).join('') : '<p class="question-context">Hakuehdoilla ei löytynyt kaavoja.</p>';
+    byId('formulaGrid').innerHTML = list.length ? list.map(formulaCard).join('') : '<div class="formula-empty"><b>Kaavaa ei löytynyt</b><p>Kokeile suureen nimeä, symbolia tai väljempää hakusanaa.</p></div>';
+    byId('formulaResultCount').textContent = list.length + ' / ' + formulas.length + ' kaavaa';
+    byId('formulaClear').classList.toggle('hidden', !query && filter === 'all');
+    document.querySelectorAll('[data-formula-query]').forEach(function (button) { button.classList.toggle('active', normalizeFormulaSearch(button.dataset.formulaQuery) === query); });
   }
 
   function openFormulaDrawer() {
@@ -1018,6 +1052,9 @@
     byId('resetCards').addEventListener('click', function () { knownCards = []; save('virtapiiriCards', knownCards); renderFlashcards(false); });
     byId('formulaFilter').innerHTML += Object.keys(topics).map(function (id) { return '<option value="' + id + '">' + topics[id].name + '</option>'; }).join('');
     byId('formulaSearch').addEventListener('input', renderFormulaBank); byId('formulaFilter').addEventListener('change', renderFormulaBank);
+    byId('formulaClear').addEventListener('click', function () { byId('formulaSearch').value = ''; byId('formulaFilter').value = 'all'; renderFormulaBank(); byId('formulaSearch').focus(); });
+    document.querySelectorAll('[data-formula-query]').forEach(function (button) { button.addEventListener('click', function () { byId('formulaSearch').value = button.dataset.formulaQuery; renderFormulaBank(); }); });
+    document.addEventListener('keydown', function (event) { if (event.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { event.preventDefault(); showView('formulas'); byId('formulaSearch').focus(); } if (event.key === 'Escape' && document.activeElement === byId('formulaSearch')) { byId('formulaSearch').value = ''; renderFormulaBank(); } });
     document.querySelectorAll('.game-tab').forEach(function (tab) { tab.addEventListener('click', function () { document.querySelectorAll('.game-tab').forEach(function (x) { x.classList.toggle('active', x === tab); }); document.querySelectorAll('.game-panel').forEach(function (p) { p.classList.toggle('active', p.id === tab.dataset.game + 'Game'); }); if (tab.dataset.game === 'memory') renderMemory(); if (tab.dataset.game === 'hangman') startHangmanRound(); }); });
     document.querySelectorAll('[data-game-jump]').forEach(function (button) { button.addEventListener('click', function () { showView('games'); var tab = document.querySelector('[data-game="' + button.dataset.gameJump + '"]'); if (tab) tab.click(); }); });
     byId('startRapid').addEventListener('click', startRapid); byId('resetMemory').addEventListener('click', renderMemory);
