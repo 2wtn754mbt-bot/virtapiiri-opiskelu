@@ -143,7 +143,7 @@ main { min-height: calc(100vh - 150px); }
 .formula-access:hover { border-color: #6876ed; color: white; }
 .question-card { border: 1px solid var(--line); background: rgba(14,16,26,.84); min-height: 520px; padding: clamp(28px, 5vw, 60px); position: relative; }
 .question-tags { display: flex; gap: 8px; }.question-tags span { color: #aab1c9; background: #1c2030; padding: 6px 9px; font: 9px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
-.question-tags span:last-child { color: #c9b7ff; }
+.question-tags #questionCategory { color: #80d7ff; background: rgba(77,212,255,.08); }
 .question-tags #questionPoints { margin-left: auto; color: var(--good); background: rgba(94,227,161,.08); }
 .question-card h2 { font-size: clamp(23px, 3vw, 35px); line-height: 1.35; margin: 28px 0 10px; letter-spacing: -.025em; max-width: 800px; }
 .question-context { color: var(--muted); line-height: 1.65; margin-bottom: 30px; }
