@@ -4,7 +4,7 @@
   var domains = [
     { id: 'electricity', name: 'Sähköfysiikka & sähköoppi', desc: 'Varaus, kentät, potentiaali, teho ja sähkömagnetismin sovellukset.', topics: ['electric-basic', 'electric-applied', 'electrical-theory'] },
     { id: 'math', name: 'Tekniikan matematiikka', desc: 'Geometria, vektorit, kompleksiluvut, funktiot ja riippuvuudet.', topics: ['geometry', 'vectors', 'complex', 'functions'] },
-    { id: 'physics', name: 'Tekniikan fysiikka', desc: 'Dynamiikka, voima ja liike, kitka sekä lämpöopin ilmiöt.', topics: ['dynamics', 'force-motion', 'friction', 'thermal'] },
+    { id: 'physics', name: 'Tekniikan fysiikka', desc: 'Kinematiikka, dynamiikka, voimat, massa, paino, kitka ja lämpöoppi.', topics: ['kinematics', 'dynamics', 'force-motion', 'mass-weight', 'friction', 'thermal'] },
     { id: 'circuits', name: 'Tasasähköpiirit', desc: 'Ohmin laki, Kirchhoffin lait, sarja- ja rinnankytkennät sekä teho.', topics: ['dc-circuits'] }
   ];
 
@@ -16,14 +16,17 @@
     'vectors': { name: 'Vektorit tasossa ja avaruudessa', domain: 'math' },
     'complex': { name: 'Kompleksiluvut', domain: 'math' },
     'functions': { name: 'Funktiot ja riippuvuudet', domain: 'math' },
+    'kinematics': { name: 'Kinematiikka', domain: 'physics' },
     'dynamics': { name: 'Dynamiikka', domain: 'physics' },
     'force-motion': { name: 'Voima ja liike', domain: 'physics' },
+    'mass-weight': { name: 'Massa, painovoima ja paino', domain: 'physics' },
     'friction': { name: 'Kitka', domain: 'physics' },
     'thermal': { name: 'Lämpöoppi', domain: 'physics' },
     'dc-circuits': { name: 'Tasasähköpiirit', domain: 'circuits' }
   };
 
   var difficultyNames = { easy: 'Helppo', medium: 'Keskivaikea', hard: 'Vaikea', extreme: 'Erittäin haastava' };
+  var weekly2Topics = ['kinematics', 'force-motion', 'mass-weight', 'friction'];
   var config = { mode: 'practice', length: 10, difficulty: 'easy', timer: false, selected: Object.keys(topics), weighted: [] };
   var session = null;
   var timerHandle = null;
@@ -50,11 +53,18 @@
     { topic: 'complex', title: 'De Moivren kaava', formula: '[r(cosφ+i sinφ)]ⁿ = rⁿ(cos nφ+i sin nφ)', symbols: 'r itseisarvo, φ argumentti' },
     { topic: 'functions', title: 'Suoran kulmakerroin', formula: 'k = (y₂−y₁)/(x₂−x₁)', symbols: 'Kahden pisteen kautta kulkevalle suoralle' },
     { topic: 'functions', title: 'Eksponentiaalinen malli', formula: 'y(t) = y₀eᵏᵗ', symbols: 'y₀ alkuarvo, k suhteellinen kasvukerroin' },
+    { topic: 'kinematics', title: 'Keskinopeus', formula: 'v̄ = Δx / Δt', symbols: 'Δx siirtymä [m], Δt aika [s]' },
+    { topic: 'kinematics', title: 'Keskikiihtyvyys', formula: 'ā = Δv / Δt', symbols: 'Δv nopeuden muutos [m/s]' },
+    { topic: 'kinematics', title: 'Vakiokiihtyvä liike', formula: 'v = v₀ + at,  x = v₀t + ½at²', symbols: 'Kaavat pätevät, kun kiihtyvyys on vakio' },
+    { topic: 'kinematics', title: 'Keskinopeus vakiokiihtyvässä liikkeessä', formula: 'v̄ = ½(v₀ + v)', symbols: 'v₀ alkunopeus, v loppunopeus' },
     { topic: 'dynamics', title: 'Liikemäärä ja impulssi', formula: 'p = mv,  J = Δp = FΔt', symbols: 'p liikemäärä, J impulssi' },
     { topic: 'dynamics', title: 'Liike-energia', formula: 'Eₖ = ½mv²', symbols: 'm massa [kg], v nopeus [m/s]' },
     { topic: 'force-motion', title: 'Newtonin toinen laki', formula: 'ΣF = ma', symbols: 'Kokonaisvoima määrää kiihtyvyyden' },
     { topic: 'force-motion', title: 'Tasaisesti kiihtyvä liike', formula: 'v = v₀ + at,  s = v₀t + ½at²', symbols: 'v nopeus, a kiihtyvyys, s matka' },
-    { topic: 'friction', title: 'Kitkavoima', formula: 'Fµ = µN', symbols: 'µ kitkakerroin, N normaalivoima' },
+    { topic: 'force-motion', title: 'Voiman komponentit', formula: 'Fₓ = F cosθ,  Fᵧ = F sinθ', symbols: 'θ kulma positiivisesta x-suunnasta' },
+    { topic: 'mass-weight', title: 'Painovoima', formula: 'G = mg', symbols: 'm massa [kg], g ≈ 9,81 m/s², G painovoima [N]' },
+    { topic: 'friction', title: 'Maksimilepokitka', formula: 'fₛ,max = µₛN', symbols: 'Lepokitka mukautuu välille 0…µₛN' },
+    { topic: 'friction', title: 'Liikekitka', formula: 'fₖ = µₖN', symbols: 'µₖ liikekitkakerroin, N normaalivoima' },
     { topic: 'thermal', title: 'Lämpömäärä', formula: 'Q = mcΔT', symbols: 'm massa, c ominaislämpökapasiteetti, ΔT lämpötilan muutos' },
     { topic: 'thermal', title: 'Lämpölaajeneminen', formula: 'ΔL = αL₀ΔT', symbols: 'α pituuden lämpötilakerroin' },
     { topic: 'thermal', title: 'Carnot-hyötysuhde', formula: 'η = 1 − T_c/T_h', symbols: 'Lämpötilat kelvineinä' },
@@ -154,6 +164,26 @@
       hard: [['Minkä muotoinen ratkaisu ensimmäisen kertaluvun homogeenisella lineaarisella differentiaaliyhtälöllä y′ = ky on?', ['y = C + kx', 'y = Cx²', 'y = Ceᵏˣ', 'y = k/x'], 2, 'Etsi funktio, joka säilyttää muotonsa derivoitaessa.', 'Eksponenttifunktio Ceᵏˣ toteuttaa yhtälön.']],
       extreme: [['Mitä Laplace-muunnoksessa tapahtuu derivaatalle f′(t)?', ['se muuttuu F(s)/s:ksi', 'se muuttuu sF(s) − f(0):ksi', 'se säilyy ennallaan', 'se muuttuu aina nollaksi'], 1, 'Alkuarvo tulee mukaan derivaatan muunnokseen.', 'L{f′} = sF(s) − f(0), mikä tekee alkuarvotehtävistä algebrallisia.']]
     },
+    'kinematics': {
+      easy: [
+        ['Mikä on nopeuden SI-yksikkö?', ['m', 'm/s', 'm/s²', 'N'], 1, 'Nopeus kertoo paikan muutoksen aikayksikössä.', 'Nopeuden SI-yksikkö on metriä sekunnissa (m/s).'],
+        ['Auto kulkee 120 m ajassa 10 s. Mikä on keskivauhti?', ['6 m/s', '10 m/s', '12 m/s', '1200 m/s'], 2, 'Jaa reitin pituus käytetyllä ajalla.', 'Keskivauhti on 120 m / 10 s = 12 m/s.'],
+        ['Mitä x(t)-kuvaajan kulmakerroin kuvaa?', ['kiihtyvyyttä', 'nopeutta', 'voimaa', 'massaa'], 1, 'Paikan aikaderivaatta on liikkeen ensimmäinen muutosnopeus.', 'Paikka-aikakuvaajan kulmakerroin on nopeus.']
+      ],
+      medium: [
+        ['Mitä v(t)-kuvaajan ja aika-akselin välinen pinta-ala kuvaa?', ['kiihtyvyyttä', 'siirtymää', 'voimaa', 'keskivauhtia aina'], 1, 'Integroi nopeus ajan suhteen.', 'Nopeus-aikakuvaajan alle jäävä etumerkillinen pinta-ala on siirtymä.'],
+        ['Nopeus muuttuu arvosta 4 m/s arvoon 16 m/s kolmessa sekunnissa. Keskikiihtyvyys on…', ['3 m/s²', '4 m/s²', '6 m/s²', '12 m/s²'], 1, 'Laske Δv/Δt.', 'Keskikiihtyvyys on (16−4)/3 = 4 m/s².'],
+        ['Vakiokiihtyvässä liikkeessä keskinopeus saadaan kaavalla…', ['v₀v', '½(v₀+v)', 'at²', 'v−v₀'], 1, 'Nopeus muuttuu lineaarisesti ajan suhteen.', 'Vakiokiihtyvässä liikkeessä keskinopeus on alku- ja loppunopeuden keskiarvo.']
+      ],
+      hard: [
+        ['Kappale palaa lähtöpisteeseensä. Mikä väite on varmasti tosi?', ['kuljettu matka on nolla', 'keskinopeusvektori on nolla', 'keskivauhti on nolla', 'hetkellinen nopeus oli aina nolla'], 1, 'Keskinopeus perustuu siirtymään, ei reitin pituuteen.', 'Kun siirtymä on nolla, keskinopeusvektori on nolla.'],
+        ['Vapaassa putoamisessa ilmanvastus sivuutetaan. Mikä on kiihtyvyys lähellä maan pintaa?', ['riippuu massasta', 'vakio noin 9,81 m/s² alaspäin', 'nolla lakipisteessä', 'kasvaa aina ajan mukana'], 1, 'Nopeus voi olla hetkellisesti nolla, vaikka kiihtyvyys ei ole.', 'Putoamiskiihtyvyys on noin 9,81 m/s² alaspäin koko lennon ajan.']
+      ],
+      extreme: [
+        ['Kolmiulotteisessa liikkeessä kinematiikan yhtälöitä sovelletaan…', ['vain kokonaisnopeuden itseisarvolle', 'jokaiselle koordinaattikomponentille erikseen', 'vain x-suunnassa', 'ilman etumerkkejä'], 1, 'Vektori voidaan hajottaa ortogonaalisiin komponentteihin.', 'Paikan, nopeuden ja kiihtyvyyden yhtälöt pätevät x-, y- ja z-komponenteille erikseen.'],
+        ['Jos v(t)-kuvaaja leikkaa aika-akselin, mitä tapahtuu?', ['paikka on varmasti nolla', 'liikkeen suunta voi vaihtua', 'kiihtyvyys on aina nolla', 'massa vaihtuu'], 1, 'Nopeuden etumerkki kertoo liikkeen suunnan valitulla akselilla.', 'Nopeuden etumerkin vaihtuessa liikesuunta vaihtuu.']
+      ]
+    },
     'dynamics': {
       easy: [['Mikä suure kuvaa kappaleen liikkeen muuttumisen hitautta?', ['massa', 'nopeus', 'teho', 'paine'], 0, 'Newtonin toisessa laissa se kertoo, miten voima tuottaa kiihtyvyyttä.', 'Massa mittaa kappaleen inertiaa.']],
       medium: [['Milloin liikemäärä säilyy systeemissä?', ['kun nopeus on vakio', 'kun ulkoisten voimien resultantti on nolla', 'kun massa pienenee', 'vain levossa'], 1, 'Tarkastele koko systeemin ulkoisia vaikutuksia.', 'Liikemäärä säilyy, kun systeemiin vaikuttava ulkoinen kokonaisvoima on nolla.']],
@@ -161,16 +191,62 @@
       extreme: [['Mikä suure säilyy keskusvoimakentässä voiman konservatiivisuuden lisäksi?', ['vain massa', 'kulmaliikemäärä', 'vain nopeuden suunta', 'kiihtyvyysvektori'], 1, 'Keskusvoiman momentti origon suhteen on nolla.', 'Nollamomentti merkitsee kulmaliikemäärän säilymistä.']]
     },
     'force-motion': {
-      easy: [['Mikä Newtonin laki yhdistää voiman, massan ja kiihtyvyyden?', ['ensimmäinen', 'toinen', 'kolmas', 'gravitaatiolaki'], 1, 'Yhtälö on F = ma.', 'Newtonin toinen laki: F = ma.']],
-      medium: [['Kappale liikkuu vakionopeudella suoraviivaisesti. Mikä on siihen vaikuttava kokonaisvoima?', ['vakio mutta ei nolla', 'nolla', 'mg', 'riippuu nopeudesta'], 1, 'Vakionopeudella kiihtyvyys on nolla.', 'Kun a = 0, myös kokonaisvoima F = ma on nolla.']],
-      hard: [['Keskeisliikkeessä keskeiskiihtyvyys suuntautuu…', ['tangentiaalisesti', 'radiaalisti ulospäin', 'kohti ympyräradan keskipistettä', 'nopeuden suuntaan'], 2, 'Nopeuden suunta muuttuu kohti radan keskustaa.', 'Keskeiskiihtyvyys on radiaalisesti kohti ympyräradan keskipistettä.']],
-      extreme: [['Rakettien liikkeessä miksi yhtälö F = ma ei yksin riitä vakiomassaisessa muodossa?', ['painovoima katoaa', 'massa muuttuu polttoaineen poistuessa', 'kiihtyvyys on aina nolla', 'nopeus ei ole vektori'], 1, 'Tarkastele systeemin massavirtaa.', 'Raketti on muuttuvamassainen systeemi, joten liikemäärätaseeseen tulee ulos virtaavan massan vaikutus.']]
+      easy: [
+        ['Mikä Newtonin laki yhdistää kokonaisvoiman, massan ja kiihtyvyyden?', ['ensimmäinen', 'toinen', 'kolmas', 'gravitaatiolaki'], 1, 'Yhtälö on ΣF = ma.', 'Newtonin toinen laki yhdistää kokonaisvoiman ja kiihtyvyyden.'],
+        ['Mihin suuntaan pinnan tukivoima vaikuttaa?', ['pinnan suuntaisesti', 'kohtisuoraan pintaa vastaan', 'aina alaspäin', 'liikkeen suuntaan'], 1, 'Tukivoima estää kappaletta tunkeutumasta pinnan läpi.', 'Normaalivoima on kohtisuorassa pintaa vastaan.'],
+        ['Voima ja vastavoima kohdistuvat…', ['samaan kappaleeseen', 'eri kappaleisiin', 'aina maahan', 'vain levossa olevaan kappaleeseen'], 1, 'Newtonin III laki kuvaa kahden kappaleen vuorovaikutusta.', 'Voima ja vastavoima ovat yhtä suuret ja vastakkaissuuntaiset, mutta kohdistuvat eri kappaleisiin.']
+      ],
+      medium: [
+        ['Kappale liikkuu vakionopeudella suoraviivaisesti. Kokonaisvoima on…', ['vakio mutta ei nolla', 'nolla', 'mg', 'riippuu nopeudesta'], 1, 'Vakionopeudella kiihtyvyys on nolla.', 'Newtonin I lain mukaan kokonaisvoima on nolla.'],
+        ['15 kg kappaleen kiihtyvyys on 2 m/s². Kokonaisvoima on…', ['7,5 N', '17 N', '30 N', '150 N'], 2, 'Käytä ΣF = ma.', 'Kokonaisvoima on 15 kg · 2 m/s² = 30 N.'],
+        ['Kaltevalla tasolla painon tason suuntainen komponentti on…', ['mg cosθ', 'mg sinθ', 'mg tanθ', 'mg/θ'], 1, 'Kulma θ on tason ja vaakatason välinen.', 'Painon tason suuntainen komponentti on mg sinθ.']
+      ],
+      hard: [
+        ['Keskeisliikkeessä keskeiskiihtyvyys suuntautuu…', ['tangentiaalisesti', 'radiaalisti ulospäin', 'kohti ympyräradan keskipistettä', 'nopeuden suuntaan'], 2, 'Nopeuden suunta muuttuu kohti radan keskustaa.', 'Keskeiskiihtyvyys on kohti ympyräradan keskipistettä.'],
+        ['Hissi kiihtyy ylöspäin. Vaijerin jännitysvoima T on…', ['pienempi kuin mg', 'yhtä suuri kuin mg', 'suurempi kuin mg', 'aina nolla'], 2, 'Kirjoita ylöspäin positiiviseksi: T−mg = ma.', 'Ylöspäin kiihtyvässä hississä T = m(g+a), joten T > mg.']
+      ],
+      extreme: [
+        ['Miksi vapaakappalekuvaan ei merkitä voimaa ja sen vastavoimaa samana parina?', ['vastavoimaa ei ole', 'ne kohdistuvat eri kappaleisiin', 'ne kumoavat aina painon', 'ne ovat eri suuria'], 1, 'Vapaakappalekuva rajataan yhteen kohdekappaleeseen.', 'Newtonin III lain pari kohdistuu kahteen eri kappaleeseen.'],
+        ['Rakettien liikkeessä miksi ΣF = ma ei yksin riitä vakiomassaisessa muodossa?', ['painovoima katoaa', 'massa muuttuu polttoaineen poistuessa', 'kiihtyvyys on aina nolla', 'nopeus ei ole vektori'], 1, 'Tarkastele systeemin massavirtaa.', 'Raketti on muuttuvamassainen systeemi.']
+      ]
+    },
+    'mass-weight': {
+      easy: [
+        ['Mikä on massan SI-yksikkö?', ['newton', 'kilogramma', 'pascal', 'joule'], 1, 'Massa kuvaa kappaleen hitautta.', 'Massan SI-yksikkö on kilogramma (kg).'],
+        ['Mikä kaava antaa painovoiman suuruuden lähellä maan pintaa?', ['G = m/g', 'G = mg', 'G = ma²', 'G = g/m'], 1, 'Kerro massa paikallisella putoamiskiihtyvyydellä.', 'Painovoima on G = mg.'],
+        ['Massa 10 kg: painovoima on noin…', ['0,98 N', '9,81 N', '98,1 N', '981 N'], 2, 'Kerro massa luvulla 9,81 m/s².', 'G = 10 · 9,81 = 98,1 N.']
+      ],
+      medium: [
+        ['Mikä erottaa massan painovoimasta?', ['massa on voima', 'massa mitataan newtoneina', 'massa kuvaa inertiaa, painovoima on gravitaatiokentän aiheuttama voima', 'niillä ei ole eroa'], 2, 'Vertaa yksiköitä kg ja N.', 'Massa kuvaa kappaleen hitautta; painovoima on kappaleeseen kohdistuva voima.'],
+        ['Mitä paino tarkoittaa kurssimateriaalin määritelmässä?', ['aina samaa kuin massa', 'voimaa, jolla pinta tukee kappaletta tai kappale painaa pintaa', 'pelkkää gravitaatiovakiota', 'kappaleen tilavuutta'], 1, 'Ajattele vaa’an näyttämää tukivoimaa.', 'Paino liittyy kappaleen ja tukipinnan väliseen voimaan.']
+      ],
+      hard: [
+        ['Hissi kiihtyy alaspäin. Henkilön näennäinen paino eli tukivoima on…', ['suurempi kuin mg', 'pienempi kuin mg', 'aina mg', 'aina nolla'], 1, 'Kirjoita N−mg = ma ja huomioi kiihtyvyyden suunta.', 'Alaspäin kiihtyessä tukivoima on pienempi kuin mg.'],
+        ['Kuun pinnalla kappaleen massa ja painovoima verrattuna Maahan ovat…', ['molemmat pienempiä', 'massa sama, painovoima pienempi', 'massa pienempi, painovoima sama', 'molemmat samoja'], 1, 'Massa on kappaleen ominaisuus, g on paikallinen.', 'Massa säilyy, mutta pienempi putoamiskiihtyvyys pienentää painovoimaa.']
+      ],
+      extreme: [
+        ['Vapaassa pudotuksessa vaa’an näyttämä tukivoima on ideaalitapauksessa…', ['mg', '2mg', 'nolla', 'riippuu vain nopeudesta'], 2, 'Vaa’an lukema perustuu tukivoimaan.', 'Vapaassa pudotuksessa tukivoima on nolla, vaikka painovoima vaikuttaa edelleen.']
+      ]
     },
     'friction': {
-      easy: [['Mihin suuntaan liukukitka vaikuttaa?', ['liikkeen suuntaan', 'liukumisnopeuden vastakkaiseen suuntaan', 'aina ylöspäin', 'pinnan normaalin suuntaan'], 1, 'Kitka vastustaa pintojen suhteellista liikettä.', 'Liukukitka vaikuttaa suhteellisen liikkeen vastakkaiseen suuntaan.']],
-      medium: [['Lepokitkan suuruus ennen liukumista on…', ['aina μₛN', 'tarvittavan suuruinen enintään arvoon μₛN', 'aina nolla', 'riippumaton normaalivoimasta'], 1, 'μₛN on yläraja, ei automaattinen arvo.', 'Lepokitka mukautuu tilanteeseen ja on enintään μₛN.']],
-      hard: [['Miksi vierintävastus on usein liukukitkaa pienempi?', ['normaalivoimaa ei ole', 'kosketusalueen muodonmuutokset ja energiahäviöt ovat pienemmät', 'massa katoaa', 'painovoima kumoutuu'], 1, 'Vertaa kosketuspintojen suhteellista liikettä ja muodonmuutoksia.', 'Vierinnässä kosketuspinnat eivät yleensä liu’u toistensa suhteen ja häviöt jäävät pienemmiksi.']],
-      extreme: [['Miksi Coulombin kitkamalli voi epäonnistua tarkassa dynaamisessa simuloinnissa?', ['se ei sisällä massaa', 'se sivuuttaa nopeus-, lämpötila- ja pintatilariippuvuuksia', 'normaalivoimaa ei ole', 'kitka on aina konservatiivinen'], 1, 'Todellinen kosketus ei määräydy yhdellä vakiokertoimella.', 'Coulombin malli on idealisointi eikä kuvaa esimerkiksi Stribeck-ilmiötä tai lämpötilariippuvuutta.']]
+      easy: [
+        ['Mihin suuntaan liikekitka vaikuttaa?', ['liikkeen suuntaan', 'suhteellisen liikkeen vastakkaiseen suuntaan', 'aina ylöspäin', 'pinnan normaalin suuntaan'], 1, 'Kitka vastustaa pintojen suhteellista liikettä.', 'Liikekitka vaikuttaa pintojen suhteellisen liikkeen vastakkaiseen suuntaan.'],
+        ['Laatikkoa ei vedetä eikä se pyri liukumaan. Vaakasuunnan kitkavoima on…', ['µₛN', 'µₖN', '0 N', 'mg'], 2, 'Lepokitka syntyy tarpeen mukaan.', 'Ilman liukumista yrittävää voimaa kitkavoima on nolla.'],
+        ['Liikekitkan perusmalli on…', ['fₖ = µₖN', 'fₖ = N/µₖ', 'fₖ = mg²', 'fₖ = ma/2'], 0, 'Kitkakerroin kertoo kitkan osuuden normaalivoimasta.', 'Liikekitka mallinnetaan kaavalla fₖ = µₖN.']
+      ],
+      medium: [
+        ['Lepokitkan suuruus ennen liukumista on…', ['aina µₛN', 'tarvittavan suuruinen enintään arvoon µₛN', 'aina nolla', 'riippumaton normaalivoimasta'], 1, 'µₛN on yläraja, ei automaattinen arvo.', 'Lepokitka mukautuu tilanteeseen ja on enintään µₛN.'],
+        ['Kumpi on tavallisesti suurempi?', ['liikekitkakerroin', 'lähtökitkakerroin', 'ne ovat aina samat', 'kumpikaan ei liity pintapariin'], 1, 'Liikkeellelähtö vaatii yleensä suuremman voiman.', 'Lähtökitkakerroin µₛ on yleensä liikekitkakerrointa µₖ suurempi.'],
+        ['32 kg laatikon normaalivoima vaakatasolla on noin 314 N. Kun µₖ = 0,38, liikekitka on noin…', ['38 N', '75 N', '119 N', '314 N'], 2, 'Laske 0,38 · 314 N.', 'Liikekitka on noin 119 N.']
+      ],
+      hard: [
+        ['Millä ehdolla kappale alkaa liukua kaltevalla tasolla?', ['tanθ ylittää µₛ:n', 'cosθ on nolla', 'massa on suuri', 'µₖ ylittää g:n'], 0, 'Rajatilassa mg sinθ = µₛmg cosθ.', 'Liuku alkaa, kun tanθ > µₛ.'],
+        ['Alaviistoon työntäminen kasvattaa vaakatasolla liikekitkaa, koska…', ['massa kasvaa', 'normaalivoima kasvaa', 'g kasvaa', 'kitkakerroin muuttuu aina'], 1, 'Hajota työntövoima vaaka- ja pystysuoriin komponentteihin.', 'Alaspäin suuntautuva komponentti kasvattaa normaalivoimaa ja siten kitkaa.']
+      ],
+      extreme: [
+        ['Miksi Coulombin kitkamalli voi epäonnistua tarkassa simuloinnissa?', ['se ei sisällä massaa', 'se sivuuttaa nopeus-, lämpötila- ja pintatilariippuvuuksia', 'normaalivoimaa ei ole', 'kitka on aina konservatiivinen'], 1, 'Todellinen kosketus ei määräydy yhdellä vakiokertoimella.', 'Coulombin malli on idealisointi.'],
+        ['Voima-anturin kuvaajassa huippu juuri ennen liikkeellelähtöä vastaa…', ['liikekitkaa', 'maksimilepokitkaa', 'painovoimaa', 'kiihtyvyyttä'], 1, 'Liikkeellelähtö vaatii staattisen kitkan rajan ylityksen.', 'Huippu on maksimilepokitka; liikkeessä voima asettuu pienemmälle liikekitkan tasolle.']
+      ]
     },
     'thermal': {
       easy: [['Mikä lämpötila-asteikko alkaa absoluuttisesta nollapisteestä?', ['Celsius', 'Fahrenheit', 'Kelvin', 'Rankine vain'], 2, 'SI-järjestelmän lämpötilayksikkö auttaa.', 'Kelvin-asteikko alkaa absoluuttisesta nollapisteestä.']],
@@ -217,6 +293,10 @@
       var decay = 0.08 + (n % 5) * .02;
       return numeric(topic, 'Suure pienenee mallilla y = y₀e^(−' + fmt(round(decay, 2)) + 't). Laske puoliintumisaika.', round(Math.log(2) / decay, 2), .03, '', 'Aseta y/y₀ = 1/2 ja ota puolittain luonnollinen logaritmi.', 't½ = ln(2)/k', 'Puoliintumisaika on ' + fmt(round(Math.log(2) / decay, 2)) + '.');
     }
+    if (topic === 'kinematics') {
+      var kv0 = 4 + n % 7, ka = 1.2 + (n % 5) * .4, kt = 4 + n % 6;
+      return numeric(topic, 'Kappaleen alkunopeus on ' + kv0 + ' m/s ja vakio kiihtyvyys ' + fmt(round(ka, 1)) + ' m/s². Laske siirtymä ' + kt + ' sekunnissa.', round(kv0 * kt + .5 * ka * kt * kt, 2), .03, 'm', 'Laske alkunopeuden tuottama siirtymä ja kiihtyvyyden lisäys erikseen.', 'x = v₀t + ½at²', 'Siirtymä on ' + fmt(round(kv0 * kt + .5 * ka * kt * kt, 2)) + ' m.');
+    }
     if (topic === 'dynamics') {
       var m1 = 2 + n % 5, v1 = 4 + n % 7, m2 = 3 + (n * 2) % 6, v2 = -2 - n % 4;
       return numeric(topic, 'Kappaleet ' + m1 + ' kg ja ' + m2 + ' kg törmäävät täysin epäkimmoisasti. Nopeudet ennen törmäystä ovat ' + v1 + ' m/s ja ' + v2 + ' m/s samalla akselilla. Laske yhteinen loppunopeus.', round((m1 * v1 + m2 * v2) / (m1 + m2), 2), .03, 'm/s', 'Valitse yksi positiivinen suunta ja säilytä nopeuksien etumerkit liikemäärätaseessa.', 'm₁v₁ + m₂v₂ = (m₁+m₂)v', 'Loppunopeus on ' + fmt(round((m1 * v1 + m2 * v2) / (m1 + m2), 2)) + ' m/s.');
@@ -224,6 +304,10 @@
     if (topic === 'force-motion') {
       var speed = 12 + n % 9, launch = 25 + (n % 5) * 10;
       return numeric(topic, 'Kappale heitetään nopeudella ' + speed + ' m/s kulmassa ' + launch + '° vaakatasosta. Ilmanvastus sivuutetaan ja lähtö- sekä osumakorkeus ovat samat. Laske kantama.', round(speed * speed * Math.sin(2 * launch * Math.PI / 180) / 9.81, 2), .03, 'm', 'Hajota alkunopeus komponentteihin tai käytä symmetrisen heittoliikkeen kantamakaavaa.', 'R = v₀² sin(2θ)/g', 'Kantama on ' + fmt(round(speed * speed * Math.sin(2 * launch * Math.PI / 180) / 9.81, 2)) + ' m.');
+    }
+    if (topic === 'mass-weight') {
+      var em = 55 + (n % 8) * 5, ea = 1.5 + (n % 4) * .5;
+      return numeric(topic, 'Henkilön massa on ' + em + ' kg. Hissi kiihtyy alaspäin ' + fmt(round(ea, 1)) + ' m/s². Laske vaa’an näyttämä tukivoima.', round(em * (9.81 - ea), 2), .03, 'N', 'Valitse ylöspäin positiiviseksi ja kirjoita N − mg = −ma.', 'N = m(g − a)', 'Vaa’an näyttämä tukivoima on ' + fmt(round(em * (9.81 - ea), 2)) + ' N.');
     }
     if (topic === 'friction') {
       var mu = .12 + (n % 5) * .04, ang = 25 + (n % 4) * 5;
@@ -281,6 +365,12 @@
       if (difficulty === 'medium') { var x1 = 1 + n % 4, y1 = 2 + n % 5, x2f = x1 + 2 + n % 4, y2f = y1 + k * (x2f - x1); return numeric(topic, 'Suora kulkee pisteiden (' + x1 + ', ' + y1 + ') ja (' + x2f + ', ' + y2f + ') kautta. Laske kulmakerroin.', k, .01, '', 'Jaa y:n muutos x:n muutoksella.', 'k = (y₂−y₁)/(x₂−x₁)', 'Kulmakerroin on ' + k + '.'); }
       var start = 100 + (n % 5) * 20, rate = 3 + n % 6, years = 4 + n % 5; return numeric(topic, 'Suure kasvaa jatkuvasti mallilla y = ' + start + 'e^(' + (rate / 100) + 't). Laske arvo, kun t = ' + years + '.', round(start * Math.exp(rate / 100 * years), 2), .02, '', 'Sijoita aika eksponenttiin ja säilytä riittävä määrä desimaaleja.', 'y(t) = y₀eᵏᵗ', 'Arvo on noin ' + fmt(round(start * Math.exp(rate / 100 * years), 2)) + '.');
     }
+    if (topic === 'kinematics') {
+      var distance = 120 + (n % 8) * 30, time = 8 + n % 7;
+      if (difficulty === 'easy') return numeric(topic, 'Kappale kulkee suoraviivaisesti ' + distance + ' m ajassa ' + time + ' s. Laske keskivauhti.', round(distance / time, 2), .02, 'm/s', 'Jaa kuljettu reitti käytetyllä ajalla.', 'ū = s/t', 'Keskivauhti on ' + fmt(round(distance / time, 2)) + ' m/s.');
+      if (difficulty === 'medium') { var v1k = 3 + n % 5, v2k = 13 + n % 8, tk = 2 + n % 5; return numeric(topic, 'Nopeus muuttuu tasaisesti arvosta ' + v1k + ' m/s arvoon ' + v2k + ' m/s ajassa ' + tk + ' s. Laske kiihtyvyys.', round((v2k - v1k) / tk, 2), .02, 'm/s²', 'Nopeuden muutos on loppu- ja alkunopeuden erotus.', 'a = (v − v₀)/t', 'Kiihtyvyys on ' + fmt(round((v2k - v1k) / tk, 2)) + ' m/s².'); }
+      var v0k = 5 + n % 7, ak = 1 + (n % 6) * .5, tkh = 4 + n % 5; return numeric(topic, 'Liike alkaa nopeudella ' + v0k + ' m/s ja kiihtyvyys on ' + fmt(ak) + ' m/s². Laske siirtymä ' + tkh + ' sekunnissa.', round(v0k * tkh + .5 * ak * tkh * tkh, 2), .03, 'm', 'Vakiokiihtyvässä liikkeessä sekä alkunopeus että kiihtyvyys kerryttävät siirtymää.', 'x = v₀t + ½at²', 'Siirtymä on ' + fmt(round(v0k * tkh + .5 * ak * tkh * tkh, 2)) + ' m.');
+    }
     if (topic === 'dynamics') {
       var mass = 2 + n % 8, vel = 3 + (n * 2) % 9;
       if (difficulty === 'easy') return numeric(topic, 'Kappaleen massa on ' + mass + ' kg ja nopeus ' + vel + ' m/s. Laske liikemäärä.', mass * vel, .01, 'kg·m/s', 'Liikemäärä yhdistää massan ja nopeuden.', 'p = mv', 'Liikemäärä on ' + (mass * vel) + ' kg·m/s.');
@@ -292,6 +382,12 @@
       if (difficulty === 'easy') return numeric(topic, 'Kappaleen massa on ' + m + ' kg ja kiihtyvyys ' + acc + ' m/s². Laske kokonaisvoima.', m * acc, .01, 'N', 'Newtonin toinen laki yhdistää nämä kolme suuretta.', 'F = ma', 'Kokonaisvoima on ' + (m * acc) + ' N.');
       if (difficulty === 'medium') { var v0 = 2 + n % 5, t2 = 3 + n % 7; return numeric(topic, 'Kappaleen alkunopeus on ' + v0 + ' m/s ja kiihtyvyys ' + acc + ' m/s². Laske nopeus ' + t2 + ' s kuluttua.', v0 + acc * t2, .01, 'm/s', 'Tasaisesti kiihtyvässä liikkeessä nopeuden muutos on at.', 'v = v₀ + at', 'Loppunopeus on ' + (v0 + acc * t2) + ' m/s.'); }
       var height = 3 + n % 10, g = 9.81; return numeric(topic, 'Kappale päästetään putoamaan levosta korkeudelta ' + height + ' m ilmanvastus sivuuttaen. Laske nopeus juuri ennen osumaa.', round(Math.sqrt(2 * g * height), 2), .02, 'm/s', 'Mekaaninen energia säilyy.', 'mgh = ½mv² → v = √(2gh)', 'Nopeus on noin ' + fmt(round(Math.sqrt(2 * g * height), 2)) + ' m/s.');
+    }
+    if (topic === 'mass-weight') {
+      var mw = 12 + n % 18;
+      if (difficulty === 'easy') return numeric(topic, 'Kappaleen massa on ' + mw + ' kg. Laske siihen Maan pinnan lähellä kohdistuva painovoima käyttäen g = 9,81 m/s².', round(mw * 9.81, 2), .02, 'N', 'Painovoima saadaan kertomalla massa putoamiskiihtyvyydellä.', 'G = mg', 'Painovoima on ' + fmt(round(mw * 9.81, 2)) + ' N.');
+      if (difficulty === 'medium') { var ah = 1 + (n % 5) * .4; return numeric(topic, 'Hississä olevan ' + mw + ' kg henkilön kiihtyvyys on ' + fmt(round(ah, 1)) + ' m/s² ylöspäin. Laske lattian tukivoima.', round(mw * (9.81 + ah), 2), .03, 'N', 'Ylöspäin kiihtyessä tukivoiman pitää ylittää painovoima.', 'N − mg = ma → N = m(g+a)', 'Tukivoima on ' + fmt(round(mw * (9.81 + ah), 2)) + ' N.'); }
+      var moonG = 1.6; return numeric(topic, 'Kappaleen massa on ' + mw + ' kg. Laske sen painovoima Kuun pinnalla, kun g = 1,6 m/s².', round(mw * moonG, 2), .02, 'N', 'Massa ei muutu siirryttäessä Kuuhun, mutta paikallinen g muuttuu.', 'G = mg', 'Painovoima Kuussa on ' + fmt(round(mw * moonG, 2)) + ' N.');
     }
     if (topic === 'friction') {
       var mk = round(.15 + (n % 6) * .05, 2), massf = 4 + n % 9, normal = round(massf * 9.81, 2);
@@ -340,10 +436,18 @@
     ['complex', 'Argumentti', 'Kompleksiluvun suuntakulma positiiviseen reaaliakseliin nähden.'],
     ['functions', 'Derivaatta', 'Funktion hetkellinen muutosnopeus ja kuvaajan tangentin kulmakerroin.'],
     ['functions', 'Eksponentiaalinen riippuvuus', 'Riippuvuus, jossa suhteellinen muutosnopeus on vakio: y = y₀eᵏᵗ.'],
+    ['kinematics', 'Keskinopeus', 'Siirtymän ja siihen käytetyn ajan suhde: v̄ = Δx/Δt. Suunta on siirtymän suunta.'],
+    ['kinematics', 'Keskivauhti', 'Kuljetun reitin pituuden ja kokonaisajan suhde. Ei sisällä suuntaa.'],
+    ['kinematics', 'Keskikiihtyvyys', 'Nopeuden muutoksen ja siihen käytetyn ajan suhde: ā = Δv/Δt.'],
     ['dynamics', 'Liikemäärä p', 'Massan ja nopeuden tulo p = mv. Säilyy suljetussa systeemissä.'],
     ['dynamics', 'Liike-energia', 'Liikkeeseen sitoutunut energia Eₖ = ½mv².'],
     ['force-motion', 'Newtonin II laki', 'Kappaleen kokonaisvoima on massan ja kiihtyvyyden tulo: ΣF = ma.'],
+    ['force-motion', 'Normaalivoima', 'Pinnan kappaleeseen kohdistama tukivoima, joka on kohtisuorassa pintaa vastaan.'],
+    ['force-motion', 'Vapaakappalekuva', 'Yhteen kohdekappaleeseen ympäristöstä kohdistuvien voimien vektorikuva.'],
     ['force-motion', 'Impulssi', 'Voiman aikavaikutus J = FΔt, joka vastaa liikemäärän muutosta.'],
+    ['mass-weight', 'Massa', 'Kappaleen inertian mitta. SI-yksikkö kilogramma (kg).'],
+    ['mass-weight', 'Painovoima', 'Paikallisen gravitaatiokentän kappaleeseen kohdistama voima G = mg.'],
+    ['mass-weight', 'Paino', 'Voima, jolla pinta tukee kappaletta tai kappale painaa pintaa.'],
     ['friction', 'Lepokitka', 'Liukumista estävä voima, joka mukautuu enimmäisarvoon F ≤ µₛN asti.'],
     ['friction', 'Liukukitka', 'Liukumista vastustava voima, jonka malli on F = µₖN.'],
     ['thermal', 'Ominaislämpökapasiteetti', 'Energia, joka tarvitaan yhden kilogramman lämpötilan nostamiseen yhdellä kelvinillä.'],
@@ -352,6 +456,106 @@
     ['dc-circuits', 'Kirchhoffin virtalaki', 'Solmuun tulevien virtojen summa on yhtä suuri kuin solmusta lähtevien virtojen summa.'],
     ['dc-circuits', 'Thévenin-ekvivalentti', 'Lineaarinen kaksinapainen piiri korvataan ideaalijännitelähteellä ja sarjaresistanssilla.']
   ].map(function (c, i) { return { id: i, topic: c[0], term: c[1], definition: c[2] }; });
+
+  var theoryPackages = [
+    {
+      id: 'kinematics', label: 'Kinematiikka', title: 'Paikka, nopeus ja kiihtyvyys',
+      lead: 'Kinematiikka kuvaa liikettä ottamatta vielä kantaa siihen, mikä liikkeen aiheuttaa. Tärkein taito on erottaa toisistaan paikka, siirtymä, kuljettu matka, nopeus ja kiihtyvyys sekä tulkita niiden aikariippuvuuskuvaajia.',
+      bullets: [
+        'Keskinopeus käyttää siirtymää Δx, mutta keskivauhti koko reitin pituutta s. Paluu lähtöpisteeseen voi siis antaa keskinopeudeksi nollan, vaikka keskivauhti on positiivinen.',
+        'x(t)-kuvaajan kulmakerroin on nopeus. Mitä jyrkempi kuvaaja, sitä suurempi nopeuden itseisarvo.',
+        'v(t)-kuvaajan kulmakerroin on kiihtyvyys ja kuvaajan etumerkillinen pinta-ala on siirtymä.',
+        'Vakiokiihtyvän liikkeen kaavoja saa käyttää vain, kun kiihtyvyys on vakio. Suunta ilmaistaan etumerkillä.',
+        'Vapaassa putoamisessa ilmanvastus sivuutetaan ja kiihtyvyys on lähellä Maan pintaa noin 9,81 m/s² alaspäin. Lakipisteessä nopeus voi olla nolla, mutta kiihtyvyys ei.'
+      ],
+      formulas: [
+        ['v̄ = Δx/Δt', 'keskinopeus: siirtymä jaettuna ajalla'],
+        ['ū = s/t', 'keskivauhti: reitin pituus jaettuna ajalla'],
+        ['ā = Δv/Δt', 'keskikiihtyvyys: nopeuden muutos aikavälillä'],
+        ['v = v₀ + at', 'nopeus vakiokiihtyvässä liikkeessä'],
+        ['x = v₀t + ½at²', 'siirtymä vakiokiihtyvässä liikkeessä'],
+        ['v̄ = ½(v₀+v)', 'keskinopeus, kun kiihtyvyys on vakio']
+      ],
+      example: ['Juna kiihdyttää 12 s nopeudesta 10 km/h kiihtyvyydellä 0,75 m/s².', ['Muunna alkunopeus: 10 km/h = 2,78 m/s.', 'Loppunopeus: v = 2,78 + 0,75·12 = 11,78 m/s.', 'Siirtymä: x = 2,78·12 + ½·0,75·12² ≈ 87,3 m.', 'Tarkistus keskinopeudella: ½(2,78 + 11,78)·12 ≈ 87,3 m.']],
+      questions: [
+        ['Mitä v(t)-kuvaajan pinta-ala kuvaa?', ['kiihtyvyyttä', 'siirtymää', 'massaa', 'voimaa'], 1, 'Nopeuden aikaintegraali on siirtymä.'],
+        ['Nopeus muuttuu arvosta 5 m/s arvoon 17 m/s kolmessa sekunnissa. Kiihtyvyys on…', ['3 m/s²', '4 m/s²', '6 m/s²', '12 m/s²'], 1, '(17−5)/3 = 4 m/s².'],
+        ['Pystysuoran heiton lakipisteessä…', ['v = 0 ja a = 0', 'v = 0 ja a = g alaspäin', 'v = g ja a = 0', 'sekä v että a vaihtavat suuntaa'], 1, 'Nopeus on hetkellisesti nolla, mutta painovoiman aiheuttama kiihtyvyys jatkuu.']
+      ]
+    },
+    {
+      id: 'forces', label: 'Voima ja Newtonin lait', title: 'Vapaakappalekuvasta liikeyhtälöön',
+      lead: 'Voima on vektorisuure: sillä on suuruus ja suunta. Lasku alkaa aina kohdekappaleen valinnasta ja vapaakappalekuvasta, johon merkitään vain tähän kappaleeseen ympäristöstä kohdistuvat voimat.',
+      bullets: [
+        'Tyypillisiä kosketusvoimia ovat normaalivoima N, vaijerin jännitys T, kitka f ja ilmanvastus. Painovoima G on kaukovaikutusvoima.',
+        'Newtonin I laki: jos kokonaisvoima on nolla, kiihtyvyys on nolla. Kappale voi silti liikkua vakionopeudella.',
+        'Newtonin II laki: kokonaisvoima ΣF määrää kiihtyvyyden. Yhtälö kirjoitetaan erikseen jokaisessa koordinaattisuunnassa.',
+        'Newtonin III laki: vuorovaikutusvoimat ovat yhtä suuret ja vastakkaissuuntaiset, mutta ne kohdistuvat eri kappaleisiin.',
+        'Vinot voimat hajotetaan komponentteihin. Valitse akselit niin, että mahdollisimman moni voima ja kiihtyvyys ovat akselien suuntaisia.'
+      ],
+      formulas: [
+        ['ΣF = 0 ⇔ a = 0', 'tasapainotilanne tai vakionopeuksinen liike'],
+        ['ΣF = ma', 'dynamiikan peruslaki'],
+        ['Fₓ = F cosθ', 'voiman x-komponentti'],
+        ['Fᵧ = F sinθ', 'voiman y-komponentti'],
+        ['mg sinθ', 'painon komponentti kaltevan tason suuntaan'],
+        ['mg cosθ', 'painon komponentti tason normaaliin suuntaan']
+      ],
+      example: ['Hissin massa on 985 kg. Laske vaijerin jännitys eri tilanteissa.', ['Vakionopeus: a = 0, joten T = mg ≈ 9,66 kN.', 'Kiihtyvyys 2,1 m/s² ylöspäin: T−mg = ma ⇒ T = m(g+a) ≈ 11,73 kN.', 'Kiihtyvyys 2,1 m/s² alaspäin: T−mg = −ma ⇒ T = m(g−a) ≈ 7,59 kN.', 'Nopeuden suuntaa ei voi päätellä kiihtyvyyden suunnasta yksin: ylöspäin kiihtyvä hissi voi esimerkiksi hidastaa alaspäin liikkuessaan.']],
+      questions: [
+        ['Kappale liikkuu suoraviivaisesti vakionopeudella. Kokonaisvoima on…', ['mg', 'nolla', 'nopeuden suuntainen', 'aina kitkavoima'], 1, 'Vakionopeus tarkoittaa nollakiihtyvyyttä.'],
+        ['Miksi voimaa ja vastavoimaa ei merkitä samaan vapaakappalekuvaan?', ['ne kumoavat toisensa', 'ne kohdistuvat eri kappaleisiin', 'vastavoimaa ei ole', 'ne ovat eri suuria'], 1, 'Vapaakappalekuva käsittelee yhtä kohdekappaletta.'],
+        ['Kaltevalla tasolla painon tason suuntainen komponentti on…', ['mg cosθ', 'mg sinθ', 'mg tanθ', 'mg/θ'], 1, 'Kun θ on tason kaltevuuskulma, tason suuntainen komponentti on mg sinθ.']
+      ]
+    },
+    {
+      id: 'friction', label: 'Massa, paino ja kitka', title: 'Tukivoima määrää kitkan',
+      lead: 'Massa kuvaa kappaleen kykyä vastustaa kiihtyvyyttä. Painovoima on gravitaatiokentän kappaleeseen kohdistama voima, kun taas paino liittyy tukipinnan tai ripustuksen välittämään voimaan. Kitka vastustaa pintojen suhteellista liikettä tai sen alkamista.',
+      bullets: [
+        'Painovoima on G = mg ja suuntautuu kappaleen painopisteestä alaspäin. Massa mitataan kilogrammoina, voimat newtoneina.',
+        'Lepokitka mukautuu tilanteeseen: 0 ≤ fₛ ≤ µₛN. Vasta juuri ennen liikkeellelähtöä fₛ saavuttaa arvon µₛN.',
+        'Liikekitkan mallissa fₖ = µₖN. Tavallisesti lähtökitkakerroin µₛ on liikekitkakerrointa µₖ suurempi.',
+        'Vaakasuoralla alustalla N = mg vain, jos muita pystysuuntaisia voimia tai pystysuuntaista kiihtyvyyttä ei ole.',
+        'Alaviistoon työntäminen kasvattaa normaalivoimaa ja kitkaa; ylöspäin vetäminen pienentää niitä. Kuivan liukukitkan perusmallissa näennäinen kosketuspinta-ala ei ratkaise kitkan suuruutta.'
+      ],
+      formulas: [
+        ['G = mg', 'painovoima'],
+        ['0 ≤ fₛ ≤ µₛN', 'lepokitkan mahdollinen vaihteluväli'],
+        ['fₛ,max = µₛN', 'maksimilepokitka juuri ennen liukumista'],
+        ['fₖ = µₖN', 'liikekitka'],
+        ['N = mg + F sinθ', 'alaviistoon työntö vaakatasolla'],
+        ['tanθ = µ', 'kaltevan tason rajakulma ideaalissa Coulombin mallissa']
+      ],
+      example: ['32 kg laatikon µₛ = 0,47 ja µₖ = 0,38 vaakatasolla.', ['Normaalivoima: N = mg = 32·9,81 ≈ 313,9 N.', 'Maksimilepokitka: fₛ,max = 0,47·313,9 ≈ 147,5 N.', 'Liikekitka: fₖ = 0,38·313,9 ≈ 119,3 N.', 'Kun vaakasuora työntö on 75 N, laatikko pysyy paikallaan ja lepokitka on 75 N - ei 147,5 N.', 'Kun laatikko liikkuu vakionopeudella, tarvittava vaakasuora vetovoima on noin 119,3 N.']],
+      questions: [
+        ['Laatikkoa ei työnnetä eikä se pyri liikkumaan. Kitkavoima on…', ['µₛN', 'µₖN', '0 N', 'mg'], 2, 'Lepokitka syntyy tarpeen mukaan.'],
+        ['Mitä alaviistoon suuntautuva työntö tekee kitkalle vaakatasolla?', ['pienentää sitä', 'kasvattaa normaalivoimaa ja kitkaa', 'ei vaikuta', 'muuttaa massaa'], 1, 'Työnnön pystysuora komponentti lisää pintojen puristusta.'],
+        ['Voima-anturin käyrän huippu juuri ennen liikkeellelähtöä kuvaa…', ['liikekitkaa', 'maksimilepokitkaa', 'painovoimaa', 'nopeutta'], 1, 'Liikkeellelähtö vaatii lepokitkan rajan ylittämisen.']
+      ]
+    }
+  ];
+  var theoryState = { active: 0 };
+
+  function renderTheory() {
+    byId('theoryNav').innerHTML = theoryPackages.map(function (pack, i) {
+      return '<button class="' + (i === theoryState.active ? 'active' : '') + '" data-theory-pack="' + i + '"><span>0' + (i + 1) + '</span><b>' + pack.label + '</b></button>';
+    }).join('');
+    var pack = theoryPackages[theoryState.active];
+    var formulasHtml = pack.formulas.map(function (f) { return '<div class="theory-formula"><strong>' + f[0] + '</strong><small>' + f[1] + '</small></div>'; }).join('');
+    var questionsHtml = pack.questions.map(function (q, qi) {
+      return '<article class="theory-question" data-theory-question="' + qi + '"><b>' + (qi + 1) + '. ' + q[0] + '</b><div class="theory-options">' + q[1].map(function (choice, ci) { return '<button data-theory-answer="' + ci + '"><span class="option-letter">' + String.fromCharCode(97 + ci) + '</span> ' + choice + '</button>'; }).join('') + '</div><p class="theory-feedback" aria-live="polite"></p></article>';
+    }).join('');
+    byId('theoryContent').innerHTML = '<article class="theory-hero"><span class="theory-index">TEORIAPAKETTI 0' + (theoryState.active + 1) + '</span><h2>' + pack.title + '</h2><p>' + pack.lead + '</p></article><section class="theory-section"><span>01 · YDINASIAT</span><h3>Rakenna ensin oikea malli</h3><ul>' + pack.bullets.map(function (item) { return '<li>' + item + '</li>'; }).join('') + '</ul></section><section class="theory-section"><span>02 · KAAVAT</span><h3>Kaavat ja käyttöehdot</h3><div class="theory-formulas">' + formulasHtml + '</div></section><section class="theory-section"><span>03 · RATKAISTU ESIMERKKI</span><h3>' + pack.example[0] + '</h3><div class="worked-example"><b>Ratkaisurunko</b><ol>' + pack.example[1].map(function (step) { return '<li>' + step + '</li>'; }).join('') + '</ol></div></section><section class="theory-section"><span>04 · TARKISTA YMMÄRRYS</span><h3>Teoriapaketin lopputesti</h3><div class="theory-quiz">' + questionsHtml + '</div></section>';
+    document.querySelectorAll('[data-theory-pack]').forEach(function (button) { button.addEventListener('click', function () { theoryState.active = Number(button.dataset.theoryPack); renderTheory(); window.scrollTo({ top: byId('theoryTitle').offsetTop - 90, behavior: 'smooth' }); }); });
+    document.querySelectorAll('[data-theory-answer]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var card = button.closest('[data-theory-question]'), question = pack.questions[Number(card.dataset.theoryQuestion)], chosen = Number(button.dataset.theoryAnswer);
+        card.querySelectorAll('[data-theory-answer]').forEach(function (option, i) { option.disabled = true; if (i === question[2]) option.classList.add('correct'); });
+        if (chosen !== question[2]) button.classList.add('wrong');
+        card.querySelector('.theory-feedback').textContent = (chosen === question[2] ? 'Oikein. ' : 'Ei aivan. ') + question[3];
+      });
+    });
+  }
 
   function renderDomains() {
     byId('domainGrid').innerHTML = domains.map(function (d, i) {
@@ -369,11 +573,13 @@
   }
 
   function renderTopics() {
-    byId('topicSelector').innerHTML = domains.map(function (domain) {
+    var weekly = config.mode === 'weekly2';
+    var visibleDomains = weekly ? [{ id: 'physics', name: 'Viikkokoe 2 -aiheet', topics: weekly2Topics }] : domains;
+    byId('topicSelector').innerHTML = visibleDomains.map(function (domain) {
       return '<div class="topic-group"><div class="topic-group-head">' + domain.name.toUpperCase() + '</div>' + domain.topics.map(function (id) {
         var checked = config.selected.indexOf(id) !== -1 ? ' checked' : '';
         var weighted = config.weighted.indexOf(id) !== -1 ? ' active' : '';
-        return '<div class="topic-option"><input id="topic-' + id + '" data-topic-check="' + id + '" type="checkbox"' + checked + '><label for="topic-' + id + '">' + topics[id].name + '</label><button class="weight-btn' + weighted + '" data-topic-weight="' + id + '" aria-label="Painota aihetta ' + topics[id].name + '" title="Painota aihetta">★</button></div>';
+        return '<div class="topic-option"><input id="topic-' + id + '" data-topic-check="' + id + '" type="checkbox"' + checked + (weekly ? ' disabled' : '') + '><label for="topic-' + id + '">' + topics[id].name + '</label>' + (weekly ? '<span class="exam-tag">SISÄLTYY</span>' : '<button class="weight-btn' + weighted + '" data-topic-weight="' + id + '" aria-label="Painota aihetta ' + topics[id].name + '" title="Painota aihetta">★</button>') + '</div>';
       }).join('') + '</div>';
     }).join('');
     document.querySelectorAll('[data-topic-check]').forEach(function (input) {
@@ -395,15 +601,18 @@
   }
 
   function updateSummary() {
-    var exam = config.mode === 'exam';
+    var weekly = config.mode === 'weekly2';
+    var exam = config.mode === 'exam' || weekly;
     var review = config.mode === 'review';
     var reviewCount = wrongBank.filter(function (q) { return config.selected.indexOf(q.topic) !== -1; }).length;
-    byId('summaryTitle').textContent = review ? 'Kertaustentti' : (exam ? ({ 8: 'Nopea tentti', 15: 'Keskipitkä tentti', 25: 'Pitkä tentti', 30: 'Mestaritentti', 50: 'Laaja tentti' }[config.length]) : 'Vapaaharjoittelu');
+    var examName = ({ 8: 'Nopea tentti', 15: 'Keskipitkä tentti', 25: 'Pitkä tentti', 30: 'Mestaritentti', 50: 'Laaja tentti' }[config.length]);
+    if (weekly) examName = 'Viikkokoe 2 · ' + ({ 8: 'nopea', 15: 'keskipitkä', 25: 'pitkä' }[config.length]);
+    byId('summaryTitle').textContent = review ? 'Kertaustentti' : (exam ? examName : 'Vapaaharjoittelu');
     byId('summaryCount').textContent = review ? reviewCount : (exam ? config.length : 10);
     byId('summaryDifficulty').textContent = review ? 'Tehtävien alkuperäinen' : difficultyNames[config.difficulty];
     var mins = config.length === 15 ? 55 : 120;
     byId('summaryTimer').textContent = exam && config.timer && config.length > 8 ? mins + ' min' : 'Ei';
-    byId('summaryTopics').textContent = config.selected.length + ' / ' + Object.keys(topics).length + (config.weighted.length ? ' · ' + config.weighted.length + ' painotettu' : '');
+    byId('summaryTopics').textContent = weekly ? '4 / 4 · rajattu' : config.selected.length + ' / ' + Object.keys(topics).length + (config.weighted.length ? ' · ' + config.weighted.length + ' painotettu' : '');
     byId('headerStreak').textContent = (stats.today && stats.today[todayKey]) || 0;
     byId('reviewModeCopy').textContent = wrongBank.length ? wrongBank.length + ' aiemmin väärin mennyttä tehtävää' : 'Ei vielä tallennettuja virheitä';
   }
@@ -420,6 +629,7 @@
     document.querySelectorAll('.nav-link').forEach(function (n) { n.classList.toggle('active', n.dataset.view === name); });
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (name === 'flashcards') renderFlashcards(true);
+    if (name === 'theory') renderTheory();
     if (name === 'progress') renderProgress();
     if (name === 'formulas') renderFormulaBank();
     if (name === 'games') { renderMemory(); startHangmanRound(); }
@@ -432,7 +642,7 @@
       });
       return { questions: reviewQuestions, index: 0, answers: [], score: 0, maxPoints: reviewQuestions.reduce(function (sum, q) { return sum + (q.type === 'mcq' ? 2 : 3); }, 0), timeLeft: null, config: JSON.parse(JSON.stringify(config)) };
     }
-    var count = config.mode === 'exam' ? config.length : 10;
+    var count = (config.mode === 'exam' || config.mode === 'weekly2') ? config.length : 10;
     var mcqCount = config.mode === 'practice' ? 5 : ({ 8: 8, 15: 5, 25: 6, 30: 6, 50: 10 }[count]);
     var types = shuffle(Array(mcqCount).fill('mcq').concat(Array(count - mcqCount).fill('open')));
     var pool = [];
@@ -774,7 +984,22 @@
 
   function bind() {
     document.querySelectorAll('[data-view], [data-view-link]').forEach(function (el) { el.addEventListener('click', function (e) { e.preventDefault(); showView(el.dataset.view || el.dataset.viewLink); }); });
-    document.querySelectorAll('[data-mode]').forEach(function (b) { b.addEventListener('click', function () { config.mode = b.dataset.mode; config.length = config.mode === 'exam' ? 8 : 10; config.timer = false; byId('timerEnabled').checked = false; document.querySelectorAll('[data-mode]').forEach(function (x) { x.classList.toggle('selected', x === b); }); document.querySelectorAll('[data-length]').forEach(function (x) { x.classList.toggle('selected', Number(x.dataset.length) === 8); }); byId('timerOption').classList.add('hidden'); byId('examLengths').classList.toggle('hidden', config.mode !== 'exam'); byId('difficultyStep').textContent = config.mode === 'exam' ? '03' : '02'; byId('topicsStep').textContent = config.mode === 'exam' ? '04' : '03'; updateSummary(); }); });
+    document.querySelectorAll('[data-mode]').forEach(function (b) { b.addEventListener('click', function () {
+      var previousMode = config.mode;
+      config.mode = b.dataset.mode;
+      var examLike = config.mode === 'exam' || config.mode === 'weekly2';
+      config.length = examLike ? 8 : 10; config.timer = false; byId('timerEnabled').checked = false;
+      if (config.mode === 'weekly2') { config.selected = weekly2Topics.slice(); config.weighted = []; }
+      else if (previousMode === 'weekly2') { config.selected = Object.keys(topics); config.weighted = []; }
+      document.querySelectorAll('[data-mode]').forEach(function (x) { x.classList.toggle('selected', x === b); });
+      document.querySelectorAll('[data-length]').forEach(function (x) { x.classList.toggle('selected', Number(x.dataset.length) === 8); });
+      document.querySelectorAll('.regular-only').forEach(function (x) { x.classList.toggle('hidden', config.mode === 'weekly2'); });
+      byId('weeklyScope').classList.toggle('hidden', config.mode !== 'weekly2');
+      document.querySelector('.topic-tools').classList.toggle('hidden', config.mode === 'weekly2');
+      byId('timerOption').classList.add('hidden'); byId('examLengths').classList.toggle('hidden', !examLike);
+      byId('difficultyStep').textContent = examLike ? '03' : '02'; byId('topicsStep').textContent = examLike ? '04' : '03';
+      renderTopics(); updateSummary();
+    }); });
     document.querySelectorAll('[data-length]').forEach(function (b) { b.addEventListener('click', function () { config.length = Number(b.dataset.length); config.timer = false; byId('timerEnabled').checked = false; document.querySelectorAll('[data-length]').forEach(function (x) { x.classList.toggle('selected', x === b); }); if (config.length === 30) { config.difficulty = 'extreme'; document.querySelectorAll('[data-difficulty]').forEach(function (x) { x.classList.toggle('selected', x.dataset.difficulty === 'extreme'); }); } var timed = config.length > 8; byId('timerOption').classList.toggle('hidden', !timed); byId('timerCopy').textContent = config.length === 15 ? '55 minuuttia' : '2 tuntia'; updateSummary(); }); });
     document.querySelectorAll('[data-difficulty]').forEach(function (b) { b.addEventListener('click', function () { if (config.mode === 'exam' && config.length === 30 && b.dataset.difficulty !== 'extreme') { byId('setupError').textContent = 'Mestaritentti suoritetaan erittäin haastavalla tasolla.'; return; } byId('setupError').textContent = ''; config.difficulty = b.dataset.difficulty; document.querySelectorAll('[data-difficulty]').forEach(function (x) { x.classList.toggle('selected', x === b); }); updateSummary(); }); });
     byId('timerEnabled').addEventListener('change', function () { config.timer = this.checked; updateSummary(); });
@@ -799,6 +1024,6 @@
     byId('hangForm').addEventListener('submit', function (e) { e.preventDefault(); guessHangman(byId('hangInput').value); });
   }
 
-  renderDomains(); renderTopics(); bind(); updateSummary(); renderFlashcards(true); renderFormulaBank(); renderMemory(); startHangmanRound();
+  renderDomains(); renderTopics(); renderTheory(); bind(); updateSummary(); renderFlashcards(true); renderFormulaBank(); renderMemory(); startHangmanRound();
 }());
 
