@@ -97,6 +97,7 @@ main { min-height: calc(100vh - 150px); }
 .step-label > span { color: var(--cyan); font: 11px var(--mono); margin-top: 4px; }
 .step-label b { display: block; font-size: 17px; }.step-label small { display: block; color: var(--muted); margin-top: 4px; }
 .choice-row, .difficulty-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.mode-row { grid-template-columns: repeat(4, 1fr); }
 .choice-card, .difficulty-card, .exam-card { text-align: left; border: 1px solid var(--line); background: rgba(255,255,255,.018); padding: 18px; cursor: pointer; min-height: 88px; transition: .2s ease; }
 .choice-card span, .choice-card b { display: block; }.choice-card span { color: var(--muted); font-size: 12px; margin-top: 7px; }
 .choice-card.selected, .difficulty-card.selected, .exam-card.selected { border-color: #6878ff; background: rgba(83,100,236,.1); box-shadow: inset 0 0 0 1px rgba(104,120,255,.25); }
@@ -105,6 +106,9 @@ main { min-height: calc(100vh - 150px); }
 .exam-card strong { font: 500 35px var(--mono); margin: 14px 0 0; }.exam-card b { font-size: 12px; }.exam-card small { color: var(--muted); margin-top: auto; font-size: 10px; line-height: 1.45; }
 .exam-tag, .difficulty-card > span { color: #8ca9ff; font: 9px var(--mono); letter-spacing: .12em; }
 .exam-card.master, .difficulty-card.extreme { border-color: rgba(77,228,255,.36); background: linear-gradient(145deg, rgba(77,228,255,.055), rgba(139,92,246,.07)); }
+.weekly-card { border-color: rgba(168,85,247,.42); background: linear-gradient(145deg, rgba(83,100,236,.08), rgba(168,85,247,.08)); }
+.weekly-scope { margin: 14px 0 0; padding: 13px 15px; border-left: 2px solid var(--violet); background: rgba(168,85,247,.06); color: var(--muted); font-size: 11px; line-height: 1.55; }
+.weekly-scope b { color: #d9c4ff; }
 .timer-toggle { margin-top: 14px; border: 1px solid var(--line); padding: 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
 .timer-toggle input { position: absolute; opacity: 0; }
 .toggle-ui { width: 38px; height: 22px; border-radius: 20px; background: #2d3143; position: relative; transition: .2s; }
@@ -167,6 +171,45 @@ main { min-height: calc(100vh - 150px); }
 
 .formula-tools { max-width: 1100px; margin: 40px auto 20px; padding: 0 20px; display: grid; grid-template-columns: 1fr 250px; gap: 10px; }.formula-tools input, .formula-tools select { background: #10131e; color: white; border: 1px solid var(--line); padding: 13px 15px; outline: none; }.formula-tools input:focus { border-color: #6775ed; }
 .formula-grid { max-width: 1100px; margin: 0 auto 100px; padding: 0 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }.formula-card { border: 1px solid var(--line); background: rgba(255,255,255,.018); padding: 22px; min-height: 190px; }.formula-card > span { color: #8791bc; font: 9px var(--mono); text-transform: uppercase; letter-spacing: .1em; }.formula-card h3 { margin: 13px 0 19px; font: 500 22px var(--mono); color: #d8dcff; }.formula-card b { display: block; font-size: 13px; margin-bottom: 8px; }.formula-card p { color: var(--muted); font-size: 11px; line-height: 1.55; margin: 0; }
+
+.theory-layout { max-width: 1180px; margin: 0 auto 100px; padding: 0 20px; display: grid; grid-template-columns: 260px 1fr; gap: 22px; align-items: start; }
+.theory-nav { position: sticky; top: 92px; border: 1px solid var(--line); background: rgba(13,15,24,.86); }
+.theory-nav button { width: 100%; min-height: 78px; padding: 15px 17px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; text-align: left; display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
+.theory-nav button:last-child { border-bottom: 0; }
+.theory-nav button span { font: 10px var(--mono); color: #7781b4; }
+.theory-nav button b { color: inherit; font-size: 12px; line-height: 1.4; }
+.theory-nav button.active { color: white; background: linear-gradient(90deg,rgba(83,100,236,.18),rgba(168,85,247,.06)); box-shadow: inset 2px 0 #7180ff; }
+.theory-content { min-width: 0; }
+.theory-hero { border: 1px solid var(--line); padding: clamp(28px,5vw,56px); background: radial-gradient(circle at 90% 5%,rgba(139,92,246,.14),transparent 35%),#10131d; }
+.theory-hero .theory-index { font: 10px var(--mono); letter-spacing: .13em; color: var(--cyan); }
+.theory-hero h2 { font-size: clamp(34px,5vw,58px); line-height: 1.02; margin: 16px 0; max-width: 800px; }
+.theory-hero > p { max-width: 760px; color: var(--muted); line-height: 1.75; }
+.theory-section { border: 1px solid var(--line); border-top: 0; padding: clamp(25px,4vw,42px); background: rgba(255,255,255,.012); }
+.theory-section > span { font: 9px var(--mono); letter-spacing: .13em; color: #8ca9ff; }
+.theory-section h3 { margin: 9px 0 18px; font-size: 24px; }
+.theory-section p, .theory-section li { color: #b9bfd2; line-height: 1.72; font-size: 13px; }
+.theory-section ul { padding-left: 20px; margin: 0; }
+.theory-section li + li { margin-top: 8px; }
+.theory-formulas { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+.theory-formula { border: 1px solid #30354b; padding: 18px; background: #0b0e16; }
+.theory-formula strong { display: block; font: 500 18px var(--mono); color: #dce0ff; margin-bottom: 8px; }
+.theory-formula small { color: var(--muted); line-height: 1.5; }
+.worked-example { border-left: 2px solid var(--cyan); background: rgba(77,228,255,.035); padding: 20px 22px; }
+.worked-example b { display: block; margin-bottom: 10px; }
+.worked-example ol { margin: 0; padding-left: 21px; }
+.theory-quiz { display: grid; gap: 14px; }
+.theory-question { border: 1px solid #2b3044; padding: 20px; background: #0d1019; }
+.theory-question > b { display: block; line-height: 1.5; margin-bottom: 14px; }
+.theory-options { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.theory-options button { min-height: 48px; border: 1px solid var(--line); background: #121521; color: #d3d7e5; cursor: pointer; text-align: left; padding: 10px 12px; }
+.theory-options button:hover { border-color: #6976e7; }
+.theory-options button.correct { border-color: var(--good); color: #d8ffe9; background: rgba(74,222,128,.07); }
+.theory-options button.wrong { border-color: var(--bad); color: #ffd5dd; background: rgba(255,107,135,.07); }
+.theory-feedback { min-height: 22px; margin: 10px 0 0 !important; font: 10px var(--mono); color: #aeb7df !important; }
+.source-material { min-height: 84px; border: 1px solid var(--line); display: grid; grid-template-columns: 60px 1fr; gap: 14px; align-items: center; padding: 15px 18px; background: rgba(83,100,236,.04); }
+.source-material > span { font: 10px var(--mono); color: var(--cyan); }
+.source-material b, .source-material small { display: block; }
+.source-material small { margin-top: 5px; color: var(--muted); line-height: 1.45; }
 .formula-drawer { position: fixed; z-index: 80; top: 0; right: 0; height: 100vh; width: min(470px, 94vw); background: #0d101a; border-left: 1px solid #353b55; padding: 45px 34px; overflow-y: auto; box-shadow: -20px 0 60px rgba(0,0,0,.45); animation: drawerIn .25s ease; }.drawer-backdrop { position: fixed; inset: 0; z-index: 70; background: rgba(0,0,0,.62); backdrop-filter: blur(3px); }.drawer-close { position: absolute; right: 22px; top: 18px; border: 0; background: none; color: #9fa5b9; font-size: 30px; cursor: pointer; }.formula-drawer h2 { font-size: 35px; margin: 12px 0; }.drawer-note { color: #c4a9ff; background: rgba(139,92,246,.09); border-left: 2px solid var(--violet); font-size: 11px; line-height: 1.6; padding: 12px; }.drawer-formulas { margin-top: 22px; }.drawer-formulas .formula-card { margin-bottom: 9px; min-height: 0; }.drawer-formulas .formula-card h3 { margin-bottom: 10px; } @keyframes drawerIn { from { transform: translateX(30px); opacity: 0; } }
 
 .game-tabs { max-width: 1000px; margin: 42px auto 0; padding: 0 20px; display: grid; grid-template-columns: repeat(3, 1fr); }.game-tab { border: 1px solid var(--line); border-right: 0; background: transparent; min-height: 68px; color: var(--muted); cursor: pointer; font-weight: 700; }.game-tab:last-child { border-right: 1px solid var(--line); }.game-tab span { display: block; font: 9px var(--mono); margin-top: 5px; }.game-tab.active { color: white; background: rgba(83,100,236,.1); border-color: #5d68ce; }
@@ -179,7 +222,7 @@ footer { border-top: 1px solid var(--line); min-height: 72px; display: flex; jus
 @media (max-width: 900px) {
   .site-header { grid-template-columns: 1fr auto; }.main-nav { position: fixed; bottom: 13px; left: 50%; transform: translateX(-50%); z-index: 50; background: rgba(15,17,27,.95); box-shadow: 0 10px 35px rgba(0,0,0,.5); }.progress-pill { display: none; }
   .hero { grid-template-columns: 1fr; padding-top: 65px; }.hero-visual { min-height: 350px; }.status-strip { grid-template-columns: 1fr 1fr; }.status-strip div:nth-child(2) { border-right: 0; }.status-strip div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
-  .setup-layout { grid-template-columns: 1fr; gap: 10px; }.setup-summary { position: static; }.exam-grid { grid-template-columns: repeat(3,1fr); }.difficulty-row { grid-template-columns: 1fr 1fr; }
+  .setup-layout { grid-template-columns: 1fr; gap: 10px; }.setup-summary { position: static; }.exam-grid { grid-template-columns: repeat(3,1fr); }.difficulty-row { grid-template-columns: 1fr 1fr; }.mode-row { grid-template-columns: 1fr 1fr; }.theory-layout { grid-template-columns: 210px 1fr; }
   .flash-layout { grid-template-columns: 1fr; gap: 25px; }.flash-sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }.flash-sidebar > label { grid-column: 1/-1; }.flash-stats { margin: 0; }.flash-sidebar .mini-link { text-align: left; }
   .formula-grid { grid-template-columns: 1fr 1fr; }.hangman-layout { grid-template-columns: 230px 1fr; gap: 30px; }.memory-grid { grid-template-columns: repeat(3,1fr); }
 }
@@ -187,7 +230,7 @@ footer { border-top: 1px solid var(--line); min-height: 72px; display: flex; jus
   .site-header { height: 65px; padding: 0 18px; }.brand { font-size: 13px; }.main-nav { width: calc(100% - 24px); justify-content: flex-start; overflow-x: auto; scrollbar-width: none; }.main-nav::-webkit-scrollbar { display: none; }.nav-link { padding: 9px 10px; font-size: 10px; flex: 0 0 auto; }
   .hero { padding: 55px 20px 30px; min-height: auto; }.hero h1 { font-size: 54px; }.hero-visual { min-height: 280px; }.status-strip div { padding: 17px 14px; align-items: start; flex-direction: column; gap: 6px; }.status-strip span { font-size: 10px; }
   .content-section { margin: 70px auto; }.section-heading { align-items: start; flex-direction: column; gap: 18px; }.domain-grid { grid-template-columns: 1fr; }.domain-card { min-height: 210px; }.focus-band { margin-bottom: 75px; padding: 34px 25px; flex-direction: column; align-items: start; }
-  .page-head { padding-top: 55px; }.page-head h1 { font-size: 43px; }.choice-row, .difficulty-row { grid-template-columns: 1fr; }.exam-grid { grid-template-columns: 1fr 1fr; }.exam-card { min-height: 135px; padding: 14px; }.topic-tools { margin: 0 0 12px; justify-content: flex-start; }
+  .page-head { padding-top: 55px; }.page-head h1 { font-size: 43px; }.choice-row, .difficulty-row, .mode-row { grid-template-columns: 1fr; }.exam-grid { grid-template-columns: 1fr 1fr; }.exam-card { min-height: 135px; padding: 14px; }.topic-tools { margin: 0 0 12px; justify-content: flex-start; }.theory-layout { grid-template-columns: 1fr; }.theory-nav { position: static; display: grid; grid-template-columns: 1fr 1fr 1fr; }.theory-nav button { border-bottom: 0; border-right: 1px solid var(--line); grid-template-columns: 1fr; }.theory-nav button:last-child { border-right: 0; }.theory-formulas, .theory-options { grid-template-columns: 1fr; }
   .game-teaser-grid { grid-template-columns: 1fr; }.game-teaser-grid button { min-height: 145px; border-right: 0; border-bottom: 1px solid var(--line); }.game-teaser-grid button:last-child { border-bottom: 0; }.game-teaser-grid b { margin-top: 18px; }
   .question-card { padding: 28px 21px; }.question-card h2 { font-size: 22px; }.question-actions { left: 21px; right: 21px; }.hint-popover { left: 21px; }.feedback, .formula-box { margin-bottom: 85px; }.results-panel { margin: 45px 15px 85px; padding: 38px 24px; }
   .quiz-topbar { grid-template-columns: 42px 1fr auto; }.quiz-topbar .formula-access { grid-row: 2; grid-column: 2 / -1; }.quiz-timer { grid-column: 3; grid-row: 1; }.formula-tools { grid-template-columns: 1fr; }.formula-grid { grid-template-columns: 1fr; }.game-tabs { grid-template-columns: 1fr; }.game-tab { border-right: 1px solid var(--line); border-bottom: 0; }.game-tab:last-child { border-bottom: 1px solid var(--line); }.speed-scale { grid-template-columns: 1fr 1fr; }.speed-scale span:nth-child(2) { border-right: 0; }.speed-scale span:nth-child(-n+2) { border-bottom: 1px solid var(--line); }.rapid-options { grid-template-columns: 1fr; }.memory-grid { grid-template-columns: 1fr 1fr; }.memory-card { min-height: 110px; }.hangman-layout { grid-template-columns: 1fr; }.gallows { max-width: 230px; margin: 0 auto; }.hang-keyboard { grid-template-columns: repeat(7,1fr); }.game-panel-head { flex-direction: column; }
