@@ -21,6 +21,7 @@
     </a>
     <nav class="main-nav" aria-label="Päänavigaatio">
       <button class="nav-link active" data-view="home">Etusivu</button>
+      <button class="nav-link" data-view="theory">Teoria</button>
       <button class="nav-link" data-view="practice">Harjoittelu</button>
       <button class="nav-link" data-view="flashcards">Flashcards</button>
       <button class="nav-link" data-view="formulas">Kaavapankki</button>
@@ -71,9 +72,9 @@
       </div>
 
       <section class="status-strip" aria-label="Alustan ominaisuudet">
-        <div><strong>12</strong><span>harjoiteltavaa aihetta</span></div>
+        <div><strong>14</strong><span>harjoiteltavaa aihetta</span></div>
         <div><strong>4</strong><span>vaikeustasoa</span></div>
-        <div><strong>5</strong><span>tenttimuotoa</span></div>
+        <div><strong>6</strong><span>tenttimuotoa</span></div>
         <div><strong>∞</strong><span>muuntuvaa tehtävää</span></div>
       </section>
 
@@ -121,6 +122,7 @@
             <div class="choice-row mode-row" role="radiogroup" aria-label="Harjoituksen muoto">
               <button class="choice-card selected" data-mode="practice"><b>Vapaaharjoittelu</b><span>10 tehtävää · oma aihevalinta</span></button>
               <button class="choice-card" data-mode="exam"><b>Harjoitustentti</b><span>8–50 tehtävää · määritelty rakenne</span></button>
+              <button class="choice-card weekly-card" data-mode="weekly2"><b>Viikkokoe 2</b><span>Kinematiikka · voimat · massa · kitka</span></button>
               <button class="choice-card" data-mode="review"><b>Kertaus</b><span id="reviewModeCopy">Aiemmin väärin menneet tehtävät</span></button>
             </div>
           </div>
@@ -131,9 +133,10 @@
               <button class="exam-card selected" data-length="8"><span class="exam-tag">NOPEA</span><strong>8</strong><b>kysymystä</b><small>8 monivalintaa</small></button>
               <button class="exam-card" data-length="15"><span class="exam-tag">KESKIPITKÄ</span><strong>15</strong><b>kysymystä</b><small>5 monivalintaa · 10 avointa</small></button>
               <button class="exam-card" data-length="25"><span class="exam-tag">PITKÄ</span><strong>25</strong><b>kysymystä</b><small>6 monivalintaa (~25 %) · 19 avointa</small></button>
-              <button class="exam-card master" data-length="30"><span class="exam-tag">MESTARITENTTI</span><strong>30</strong><b>kysymystä</b><small>Erittäin haastava · 6 monivalintaa</small></button>
-              <button class="exam-card" data-length="50"><span class="exam-tag">LAAJA</span><strong>50</strong><b>kysymystä</b><small>10 monivalintaa · 40 avointa</small></button>
+              <button class="exam-card master regular-only" data-length="30"><span class="exam-tag">MESTARITENTTI</span><strong>30</strong><b>kysymystä</b><small>Erittäin haastava · 6 monivalintaa</small></button>
+              <button class="exam-card regular-only" data-length="50"><span class="exam-tag">LAAJA</span><strong>50</strong><b>kysymystä</b><small>10 monivalintaa · 40 avointa</small></button>
             </div>
+            <p id="weeklyScope" class="weekly-scope hidden"><b>Viikkokoe 2:</b> tehtävät muodostetaan vain kinematiikasta, Newtonin laeista, voimista, massasta, painosta ja kitkasta.</p>
             <label id="timerOption" class="timer-toggle hidden"><input id="timerEnabled" type="checkbox"><span class="toggle-ui"></span><span><b>Suorita aikarajalla</b><small id="timerCopy">55 minuuttia</small></span></label>
           </div>
 
@@ -201,6 +204,18 @@
         <div id="resultBreakdown" class="result-breakdown"></div>
         <div class="result-actions"><button id="retrySession" class="btn primary">Harjoittele uudelleen</button><button class="btn ghost" data-view="home">Palaa etusivulle</button></div>
       </section>
+    </section>
+
+    <section id="theoryView" class="view" aria-labelledby="theoryTitle">
+      <div class="page-head compact">
+        <span class="kicker">TEORIAPAKETIT</span>
+        <h1 id="theoryTitle">Liike ja voimat ymmärrettävästi</h1>
+        <p>Kolme tiivistä kokonaisuutta kurssimateriaalien pohjalta. Jokainen paketti etenee käsitteistä kaavoihin, ratkaistuun esimerkkiin ja lopputestiin.</p>
+      </div>
+      <div class="theory-layout">
+        <aside id="theoryNav" class="theory-nav" aria-label="Valitse teoriapaketti"></aside>
+        <div id="theoryContent" class="theory-content"></div>
+      </div>
     </section>
 
     <section id="formulasView" class="view" aria-labelledby="formulasTitle">
@@ -271,6 +286,9 @@
     <section id="sourcesView" class="view" aria-labelledby="sourcesTitle">
       <div class="page-head compact"><span class="kicker">LÄHTEET</span><h1 id="sourcesTitle">Jatka syvemmälle</h1><p>Tehtävät ovat tätä sivustoa varten kirjoitettuja. Alla olevat Finna-tietueet auttavat löytämään täydentävää opiskelumateriaalia kirjastoista.</p></div>
       <div class="source-list">
+        <div class="source-material"><span>PDF</span><div><b>Kinematiikka tf 2026</b><small>Nopeus, kiihtyvyys, kuvaajat, vakiokiihtyvä liike ja vapaa putoaminen</small></div></div>
+        <div class="source-material"><span>PDF</span><div><b>Voima tf 2026 syksy</b><small>Vapaakappalekuvat, Newtonin lait, voimien komponentit, massa, painovoima ja paino</small></div></div>
+        <div class="source-material"><span>PDF</span><div><b>Kitkavoima, massa pv paino</b><small>Lepo- ja liikekitka, kitkakertoimet sekä voima-anturin tulkinta</small></div></div>
         <a href="https://www.finna.fi/Record/savonia.991699016406248?checkRoute=1" target="_blank" rel="noopener"><span>01</span><div><b>Tekniikan fysiikka 2</b><small>Sähkökentät, tasasähkö, magneettikentät, vaihtosähkö ja lämpöoppi</small></div><i>↗</i></a>
         <a href="https://kansalliskirjasto.finna.fi/Record/vaari.979301" target="_blank" rel="noopener"><span>02</span><div><b>Tekniikan fysiikka 1</b><small>Mekaniikka, lämpöoppi ja insinööriopintojen fysiikan perusteet</small></div><i>↗</i></a>
         <a href="https://www.finna.fi/Record/piki.388545" target="_blank" rel="noopener"><span>03</span><div><b>Insinöörikoulutuksen fysiikka 1</b><small>Vektorit, liikeoppi, voima, kitka, energia ja SI-järjestelmä</small></div><i>↗</i></a>
