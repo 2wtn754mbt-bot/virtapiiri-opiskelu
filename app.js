@@ -115,6 +115,7 @@
   function numeric(topic, prompt, answer, tolerance, unit, hint, formula, explanation) {
     return { topic: topic, type: 'open', answerType: 'numeric', prompt: prompt, answer: answer, tolerance: tolerance, unit: unit, hint: hint, formula: formula, explanation: explanation };
   }
+  function illustrated(question, visual) { question.visual = visual; question.applied = true; return question; }
 
   var concepts = {
     'electric-basic': {
@@ -427,8 +428,59 @@
     return numeric(topic, 'Jännitteenjakajassa R₁ = ' + R1 + ' kΩ ja R₂ = ' + R2 + ' kΩ ovat sarjassa lähteellä ' + U + ' V. Laske R₂:n yli vaikuttava jännite.', round(U * R2 / (R1 + R2), 3), .02, 'V', 'Sarjapiirin virta on sama molemmissa vastuksissa.', 'U₂ = U · R₂/(R₁ + R₂)', 'Lähtöjännite on ' + fmt(round(U * R2 / (R1 + R2), 3)) + ' V.');
   }
 
-  function generateQuestion(topic, type, difficulty, seed) {
-    var q;
+  function visualQuestion(topic, type, difficulty, seed) {
+    var n = Math.abs(seed) + 5, g = 9.81;
+    if (topic === 'kinematics') {
+      var v0 = 2 + n % 5, time = 4 + n % 5, acc = 1 + (n % 4) * .5, v1 = round(v0 + acc * time, 1);
+      var motionVisual = { kind: 'velocity-time', v0: v0, v1: v1, time: time, alt: 'Nopeus-aikakuvaaja, jossa nopeus kasvaa suoraviivaisesti arvosta ' + v0 + ' metriä sekunnissa arvoon ' + v1 + ' metriä sekunnissa ajassa ' + time + ' sekuntia.', caption: 'Lue kuvaajasta alku- ja loppunopeus sekä tarkasteltava aikaväli.' };
+      if (type === 'mcq') return illustrated(mcq(topic, 'Mitä kuvan v(t)-suoran kulmakerroin fysikaalisesti kuvaa?', ['siirtymää', 'kiihtyvyyttä', 'massaa', 'liikemäärää'], 1, 'Kulmakerroin kertoo pystyakselin muutoksen suhteessa vaaka-akselin muutokseen.', 'Nopeus-aikakuvaajan kulmakerroin on kiihtyvyys a = Δv/Δt.'), motionVisual);
+      if (difficulty === 'easy' || difficulty === 'medium') return illustrated(numeric(topic, 'Ajoneuvon nopeus muuttuu kuvan mukaisesti. Laske keskikiihtyvyys.', round((v1 - v0) / time, 2), .02, 'm/s²', 'Poimi kuvaajasta Δv ja Δt. Suoran kulmakerroin antaa kiihtyvyyden.', 'a = (v − v₀)/t', 'Keskikiihtyvyys on (' + fmt(v1) + ' − ' + v0 + ')/' + time + ' = ' + fmt(round((v1 - v0) / time, 2)) + ' m/s².'), motionVisual);
+      return illustrated(numeric(topic, 'Ajoneuvon nopeus muuttuu kuvan mukaisesti. Laske siirtymä tarkasteluaikana.', round(.5 * (v0 + v1) * time, 2), .03, 'm', 'Siirtymä on v(t)-kuvaajan alle jäävä puolisuunnikkaan pinta-ala.', 'Δx = ½(v₀ + v)t', 'Siirtymä on ½·(' + v0 + ' + ' + fmt(v1) + ')·' + time + ' = ' + fmt(round(.5 * (v0 + v1) * time, 2)) + ' m.'), motionVisual);
+    }
+    if (topic === 'dynamics') {
+      var massC = 2 + n % 6, speedC = 4 + n % 7, radiusC = 2 + n % 5;
+      var circleVisual = { kind: 'circular', mass: massC, speed: speedC, radius: radiusC, alt: 'Kappale liikkuu ympyräradalla. Nopeus on radan tangentin suuntainen ja säde osoittaa kohti keskipistettä.', caption: 'Nopeus on tangentiaalinen, mutta keskeiskiihtyvyys ja kokonaisvoima osoittavat kohti keskipistettä.' };
+      if (type === 'mcq') return illustrated(mcq(topic, 'Mihin suuntaan kuvan kappaleen keskeiskiihtyvyys osoittaa?', ['nopeusvektorin suuntaan', 'radan keskipisteeseen', 'radasta poispäin', 'kiihtyvyys on nolla'], 1, 'Ympyräradalla nopeuden suunta muuttuu jatkuvasti.', 'Keskeiskiihtyvyys osoittaa aina kohti ympyräradan keskipistettä.'), circleVisual);
+      return illustrated(numeric(topic, 'Kappale liikkuu kuvan ympyräradalla. Laske tarvittavan keskeisvoiman suuruus.', round(massC * speedC * speedC / radiusC, 2), .03, 'N', 'Laske ensin keskeiskiihtyvyys v²/r ja kerro se massalla.', 'F_c = mv²/r', 'Keskeisvoima on ' + massC + '·' + speedC + '²/' + radiusC + ' = ' + fmt(round(massC * speedC * speedC / radiusC, 2)) + ' N.'), circleVisual);
+    }
+    if (topic === 'force-motion') {
+      var massI = 6 + n % 10, angleI = 20 + (n % 5) * 5;
+      var inclineVisual = { kind: 'incline', mass: massI, angle: angleI, friction: false, alt: 'Kappale on kitkattomalla kaltevalla tasolla, jonka kaltevuuskulma on ' + angleI + ' astetta. Kuvassa näkyvät painovoima ja normaalivoima.', caption: 'Hajota painovoima tason suuntaiseen ja tasoa vastaan kohtisuoraan komponenttiin.' };
+      if (type === 'mcq') return illustrated(mcq(topic, 'Mikä kuvan painovoiman komponentti vetää kappaletta kaltevaa tasoa alaspäin?', ['mg cosθ', 'mg sinθ', 'N sinθ', 'ma cosθ'], 1, 'Tason kaltevuuskulma on θ.', 'Painovoiman tason suuntainen komponentti on mg sinθ.'), inclineVisual);
+      if (difficulty === 'easy' || difficulty === 'medium') return illustrated(numeric(topic, 'Laske kuvan kappaleeseen vaikuttavan painovoiman tason suuntainen komponentti.', round(massI * g * Math.sin(angleI * Math.PI / 180), 2), .03, 'N', 'Piirrä painovoiman komponenttikolmio ja valitse tason suuntainen kateetti.', 'G∥ = mg sinθ', 'Tason suuntainen komponentti on ' + fmt(round(massI * g * Math.sin(angleI * Math.PI / 180), 2)) + ' N.'), inclineVisual);
+      return illustrated(numeric(topic, 'Taso on kitkaton. Laske kuvan kappaleen kiihtyvyys tason suuntaan.', round(g * Math.sin(angleI * Math.PI / 180), 2), .03, 'm/s²', 'Kirjoita tason suunnassa ΣF = ma. Massa supistuu pois.', 'mg sinθ = ma → a = g sinθ', 'Kiihtyvyys on 9,81·sin(' + angleI + '°) = ' + fmt(round(g * Math.sin(angleI * Math.PI / 180), 2)) + ' m/s².'), inclineVisual);
+    }
+    if (topic === 'mass-weight') {
+      var massE = 55 + (n % 6) * 5, accE = round(1 + (n % 5) * .4, 1), upward = n % 2 === 0;
+      var elevatorVisual = { kind: 'elevator', mass: massE, acceleration: accE, upward: upward, alt: 'Henkilö seisoo hississä vaa’alla. Hissin kiihtyvyys on ' + accE + ' metriä sekunnissa toiseen ' + (upward ? 'ylöspäin' : 'alaspäin') + '.', caption: 'Vaa’an lukema on henkilöön kohdistuva tukivoima N, ei suoraan painovoima mg.' };
+      if (type === 'mcq') return illustrated(mcq(topic, 'Miten kuvan vaa’an lukema vertautuu arvoon mg?', upward ? ['pienempi kuin mg', 'yhtä suuri kuin mg', 'suurempi kuin mg', 'aina nolla'] : ['suurempi kuin mg', 'yhtä suuri kuin mg', 'pienempi kuin mg', 'aina nolla'], 2, 'Tarkastele kiihtyvyyden suuntaa ja kirjoita pystysuuntainen liikeyhtälö.', upward ? 'Ylöspäin kiihtyessä N = m(g+a), joten lukema on suurempi kuin mg.' : 'Alaspäin kiihtyessä N = m(g−a), joten lukema on pienempi kuin mg.'), elevatorVisual);
+      var support = massE * (upward ? g + accE : g - accE);
+      return illustrated(numeric(topic, 'Henkilö seisoo kuvan hississä vaa’alla. Laske vaa’an näyttämä tukivoima.', round(support, 2), .03, 'N', 'Valitse ylöspäin positiiviseksi ja huomioi kuvan kiihtyvyyden suunta.', upward ? 'N − mg = ma → N = m(g+a)' : 'N − mg = −ma → N = m(g−a)', 'Vaa’an lukema on ' + fmt(round(support, 2)) + ' N.'), elevatorVisual);
+    }
+    if (topic === 'friction') {
+      var massF = 8 + n % 7, pullF = 80 + (n % 6) * 8, angleF = 20 + (n % 4) * 5, muF = round(.2 + (n % 4) * .05, 2);
+      var frictionVisual = { kind: 'angled-pull', mass: massF, force: pullF, angle: angleF, mu: muF, alt: 'Laatikkoa vedetään vaakatasolla yläviistoon voimalla ' + pullF + ' newtonia kulmassa ' + angleF + ' astetta. Liikekitkakerroin on ' + muF + '.', caption: 'Ylöspäin suuntautuva voimakomponentti pienentää normaalivoimaa ja siten liikekitkaa.' };
+      if (type === 'mcq') return illustrated(mcq(topic, 'Mitä kuvan vetovoiman pystysuuntainen komponentti tekee liikekitkalle?', ['kasvattaa normaalivoimaa ja kitkaa', 'pienentää normaalivoimaa ja kitkaa', 'ei vaikuta kumpaankaan', 'muuttaa kappaleen massaa'], 1, 'Tarkastele pystysuuntaista tasapainoa.', 'Ylöspäin suuntautuva F sinθ pienentää normaalivoimaa N = mg − F sinθ ja siten kitkaa.'), frictionVisual);
+      var normalF = massF * g - pullF * Math.sin(angleF * Math.PI / 180), frictionF = muF * normalF, netF = pullF * Math.cos(angleF * Math.PI / 180) - frictionF;
+      if (difficulty === 'easy') return illustrated(numeric(topic, 'Laske kuvan laatikkoon kohdistuva normaalivoima.', round(normalF, 2), .03, 'N', 'Pystysuunnassa kiihtyvyys on nolla. Vetovoiman pystysuuntainen komponentti keventää laatikkoa.', 'N = mg − F sinθ', 'Normaalivoima on ' + fmt(round(normalF, 2)) + ' N.'), frictionVisual);
+      return illustrated(numeric(topic, 'Laatikko liukuu kuvan mukaisesti oikealle. Laske sen kiihtyvyys.', round(netF / massF, 2), .04, 'm/s²', 'Laske ensin normaalivoima, sitten liikekitka ja lopuksi vaakasuuntainen kokonaisvoima.', 'N = mg − F sinθ,  fₖ = µₖN,  ma = F cosθ − fₖ', 'Normaalivoima on ' + fmt(round(normalF, 2)) + ' N, kitka ' + fmt(round(frictionF, 2)) + ' N ja kiihtyvyys ' + fmt(round(netF / massF, 2)) + ' m/s².'), frictionVisual);
+    }
+    if (topic === 'thermal') {
+      var lengthT = round(1.5 + (n % 5) * .5, 1), deltaT = 40 + (n % 5) * 10, alphaT = 12e-6;
+      var rodVisual = { kind: 'thermal-rod', length: lengthT, delta: deltaT, alt: 'Terästanko pitenee lämmitettäessä. Alkupituus on ' + lengthT + ' metriä ja lämpötilan muutos ' + deltaT + ' celsiusastetta.', caption: 'Lämpölaajeneminen kasvattaa pituutta molempien päiden ollessa vapaita.' };
+      if (type === 'mcq') return illustrated(mcq(topic, 'Mikä kuvan tangon pituuden muutoksen määrää?', ['vain loppulämpötila', 'α, alkupituus ja lämpötilan muutos', 'vain tangon massa', 'kiihtyvyys ja aika'], 1, 'Muista lineaarisen lämpölaajenemisen kaava.', 'Pituuden muutos on ΔL = αL₀ΔT.'), rodVisual);
+      return illustrated(numeric(topic, 'Terästankoa lämmitetään kuvan mukaisesti. Laske pituuden kasvu millimetreinä, kun α = 12·10⁻⁶ 1/°C.', round(alphaT * lengthT * deltaT * 1000, 3), .03, 'mm', 'Kerro lämpötilakerroin, alkupituus ja lämpötilan muutos. Muunna lopuksi metrit millimetreiksi.', 'ΔL = αL₀ΔT', 'Pituuden kasvu on ' + fmt(round(alphaT * lengthT * deltaT * 1000, 3)) + ' mm.'), rodVisual);
+    }
+    return null;
+  }
+
+  function generateQuestion(topic, type, difficulty, seed, preferVisual) {
+    var q = preferVisual ? visualQuestion(topic, type, difficulty, seed) : null;
+    if (q) {
+      q.difficulty = difficulty;
+      q.id = topic + '-visual-' + type + '-' + difficulty + '-' + seed + '-' + Math.random().toString(36).slice(2, 7);
+      return q;
+    }
     if (type === 'mcq') {
       var list = concepts[topic][difficulty];
       var item = pick(list, seed);
@@ -671,7 +723,11 @@
     if (count >= config.selected.length) chosen = shuffle(config.selected);
     while (chosen.length < count) chosen.push(pick(pool, Math.floor(Math.random() * 9999)));
     chosen = shuffle(chosen).slice(0, count);
-    var questions = chosen.map(function (topic, i) { return generateQuestion(topic, types[i], config.difficulty, Date.now() % 10000 + i * 17); });
+    var questions = chosen.map(function (topic, i) {
+      var physicsTopic = topics[topic].domain === 'physics';
+      var preferVisual = config.mode === 'weekly2' ? i % 3 === 0 : physicsTopic && i % 4 === 0;
+      return generateQuestion(topic, types[i], config.difficulty, Date.now() % 10000 + i * 17, preferVisual);
+    });
     var seconds = config.timer && count > 8 ? (count === 15 ? 55 * 60 : 120 * 60) : null;
     return { questions: questions, index: 0, answers: [], score: 0, maxPoints: questions.reduce(function (sum, q) { return sum + (q.type === 'mcq' ? 2 : 3); }, 0), timeLeft: seconds, config: JSON.parse(JSON.stringify(config)) };
   }
@@ -687,6 +743,28 @@
     window.scrollTo({ top: byId('quizPanel').offsetTop - 80, behavior: 'smooth' });
   }
 
+  function questionVisualMarkup(v) {
+    var defs = '<defs><marker id="qArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><linearGradient id="qFill" x1="0" x2="1"><stop stop-color="#5f6bea" stop-opacity=".28"/><stop offset="1" stop-color="#45d4ff" stop-opacity=".06"/></linearGradient></defs>';
+    var svg = '';
+    if (v.kind === 'velocity-time') {
+      var maxV = Math.max(v.v1 + 3, 12), y0 = 235 - v.v0 / maxV * 165, y1 = 235 - v.v1 / maxV * 165;
+      svg = '<svg viewBox="0 0 720 300" role="img" aria-label="' + v.alt + '"><title>' + v.alt + '</title>' + defs + '<path class="axis" d="M70 35V240H660M62 232L70 240L78 232M652 232L660 240L652 248"/><path class="guide" d="M70 ' + y0 + 'H620M70 ' + y1 + 'H620M620 240V' + y1 + '"/><path d="M70 240L70 ' + y0 + 'L620 ' + y1 + 'L620 240Z" fill="url(#qFill)"/><path class="main-line" d="M70 ' + y0 + 'L620 ' + y1 + '"/><circle cx="70" cy="' + y0 + '" r="5" fill="#67dcff"/><circle cx="620" cy="' + y1 + '" r="5" fill="#8b83ff"/><text x="25" y="45" class="label-strong">v</text><text x="637" y="270" class="label-strong">t</text><text x="18" y="' + (y0 + 4) + '">' + v.v0 + ' m/s</text><text x="18" y="' + (y1 + 4) + '">' + fmt(v.v1) + ' m/s</text><text x="590" y="267">' + v.time + ' s</text><text x="325" y="' + (Math.min(y0,y1) - 16) + '" class="label-accent">v(t)</text></svg>';
+    } else if (v.kind === 'circular') {
+      svg = '<svg viewBox="0 0 720 300" role="img" aria-label="' + v.alt + '"><title>' + v.alt + '</title>' + defs + '<circle cx="340" cy="155" r="95" class="guide"/><circle cx="340" cy="155" r="6" fill="#6672a3"/><path class="accent-line" marker-end="url(#qArrow)" d="M435 155V65"/><path class="force-line" marker-end="url(#qArrow)" d="M425 155H355"/><path class="axis" marker-end="url(#qArrow)" d="M340 155H425"/><circle cx="435" cy="155" r="20" class="object"/><text x="427" y="160" class="label-strong">m</text><text x="449" y="78" class="label-accent">v = ' + v.speed + ' m/s</text><text x="365" y="145">r = ' + v.radius + ' m</text><text x="357" y="184">Fₙ</text><text x="276" y="279">m = ' + v.mass + ' kg</text></svg>';
+    } else if (v.kind === 'incline') {
+      var radI = v.angle * Math.PI / 180, xEnd = 120 + 500 * Math.cos(radI), yEnd = 245 - 500 * Math.sin(radI), bx = 120 + 300 * Math.cos(radI), by = 245 - 300 * Math.sin(radI);
+      svg = '<svg viewBox="0 0 720 300" role="img" aria-label="' + v.alt + '"><title>' + v.alt + '</title>' + defs + '<path class="surface" d="M85 245H650M120 245L' + xEnd + ' ' + yEnd + '"/><path class="guide" d="M120 245A70 70 0 0 1 ' + (120 + 70*Math.cos(radI)) + ' ' + (245 - 70*Math.sin(radI)) + '"/><text x="184" y="235" class="label-accent">θ = ' + v.angle + '°</text><g transform="translate(' + (bx-40) + ' ' + (by-25) + ') rotate(-' + v.angle + ' 40 25)"><rect width="80" height="50" rx="5" class="object"/><text x="26" y="31" class="label-strong">' + v.mass + ' kg</text></g><path class="force-line danger" marker-end="url(#qArrow)" d="M' + bx + ' ' + by + 'V' + (by+105) + '"/><path class="force-line alt" marker-end="url(#qArrow)" d="M' + bx + ' ' + by + 'L' + (bx-38*Math.sin(radI)) + ' ' + (by-38*Math.cos(radI)) + '"/><text x="' + (bx+10) + '" y="' + (by+95) + '">G = mg</text><text x="' + (bx-72) + '" y="' + (by-45) + '">N</text></svg>';
+    } else if (v.kind === 'elevator') {
+      var aY = v.upward ? 50 : 248, aStart = v.upward ? 120 : 178;
+      svg = '<svg viewBox="0 0 720 300" role="img" aria-label="' + v.alt + '"><title>' + v.alt + '</title>' + defs + '<rect x="205" y="35" width="310" height="220" rx="8" class="soft-fill"/><path class="surface" d="M235 225H485"/><rect x="305" y="204" width="110" height="17" rx="3" class="object"/><circle cx="360" cy="105" r="25" class="object"/><path class="axis" d="M360 130V185M360 145L325 175M360 145L395 175M360 185L330 215M360 185L390 215"/><path class="force-line alt" marker-end="url(#qArrow)" d="M430 175V80"/><path class="force-line danger" marker-end="url(#qArrow)" d="M290 145V230"/><path class="accent-line" marker-end="url(#qArrow)" d="M560 ' + aStart + 'V' + aY + '"/><text x="438" y="92">N</text><text x="250" y="238">G = mg</text><text x="575" y="150" class="label-accent">a = ' + fmt(v.acceleration) + ' m/s²</text><text x="323" y="70" class="label-strong">m = ' + v.mass + ' kg</text><text x="321" y="247">VAAKA</text></svg>';
+    } else if (v.kind === 'angled-pull') {
+      svg = '<svg viewBox="0 0 720 300" role="img" aria-label="' + v.alt + '"><title>' + v.alt + '</title>' + defs + '<path class="surface" d="M65 225H655"/><rect x="260" y="155" width="145" height="70" rx="6" class="object"/><text x="298" y="195" class="label-strong">m = ' + v.mass + ' kg</text><path class="force-line alt" marker-end="url(#qArrow)" d="M405 170L565 90"/><path class="force-line danger" marker-end="url(#qArrow)" d="M260 210H145"/><path class="force-line" marker-end="url(#qArrow)" d="M332 155V78"/><path class="force-line danger" marker-end="url(#qArrow)" d="M332 225V278"/><path class="guide" d="M405 170H500M455 170A50 50 0 0 0 449 148"/><text x="510" y="112" class="label-accent">F = ' + v.force + ' N</text><text x="462" y="152">θ = ' + v.angle + '°</text><text x="107" y="202">fₖ</text><text x="342" y="92">N</text><text x="342" y="276">mg</text><text x="482" y="255">µₖ = ' + fmt(v.mu) + '</text></svg>';
+    } else if (v.kind === 'thermal-rod') {
+      svg = '<svg viewBox="0 0 720 300" role="img" aria-label="' + v.alt + '"><title>' + v.alt + '</title>' + defs + '<text x="80" y="66">ENNEN</text><rect x="80" y="82" width="420" height="30" rx="4" class="object"/><path class="axis" marker-start="url(#qArrow)" marker-end="url(#qArrow)" d="M80 135H500"/><text x="250" y="156">L₀ = ' + fmt(v.length) + ' m</text><text x="80" y="207">LÄMMITYKSEN JÄLKEEN</text><rect x="80" y="222" width="500" height="30" rx="4" fill="url(#qFill)" stroke="#7b79eb" stroke-width="2"/><path class="heat" d="M160 198q12-18 24 0t24 0M285 198q12-18 24 0t24 0M410 198q12-18 24 0t24 0"/><path class="accent-line" marker-end="url(#qArrow)" d="M505 237H580"/><text x="515" y="270" class="label-accent">ΔL</text><text x="530" y="75">ΔT = +' + v.delta + ' °C</text></svg>';
+    }
+    return '<figure><div class="question-visual-head"><b>Soveltava kuvatehtävä</b><span>Käytä kuvan tietoja osana tehtävänantoa</span></div>' + svg + '<figcaption>' + v.caption + '</figcaption></figure>';
+  }
+
   function renderQuestion() {
     var q = session.questions[session.index];
     session.attempts = 0;
@@ -699,6 +777,8 @@
     byId('questionDifficulty').textContent = difficultyNames[q.difficulty];
     byId('questionText').textContent = q.prompt;
     byId('questionContext').textContent = q.type === 'open' ? 'Kirjoita pelkkä lukuarvo. Sinulla on kolme yritystä.' + (q.unit ? ' Yksikkö: ' + q.unit + '.' : '') : 'Valitse yksi vaihtoehto. Sinulla on kaksi yritystä.';
+    byId('questionVisual').innerHTML = q.visual ? questionVisualMarkup(q.visual) : '';
+    byId('questionVisual').classList.toggle('hidden', !q.visual);
     byId('feedback').className = 'feedback hidden'; byId('feedback').innerHTML = '';
     byId('formulaBox').classList.add('hidden'); byId('hintPopover').classList.add('hidden');
     byId('hintButton').disabled = false; byId('quizFormulaButton').disabled = false;
