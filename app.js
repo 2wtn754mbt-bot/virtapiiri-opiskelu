@@ -474,11 +474,49 @@
     return null;
   }
 
-  function generateQuestion(topic, type, difficulty, seed, preferVisual) {
-    var q = preferVisual ? visualQuestion(topic, type, difficulty, seed) : null;
+  var weeklyTheoryIndexes = {
+    'kinematics': { easy: [0, 2], medium: [0, 2], hard: [0, 1], extreme: [0, 1] },
+    'force-motion': { easy: [0, 1, 2], medium: [0, 2], hard: [0, 1], extreme: [0, 1] },
+    'mass-weight': { easy: [0, 1], medium: [0, 1], hard: [0, 1], extreme: [0] },
+    'friction': { easy: [0, 1, 2], medium: [0, 1], hard: [0, 1], extreme: [0, 1] }
+  };
+
+  function weeklyTheoryQuestion(topic, difficulty, seed) {
+    var list = concepts[topic][difficulty];
+    var allowed = weeklyTheoryIndexes[topic][difficulty] || list.map(function (_, i) { return i; });
+    var item = list[pick(allowed, seed)];
+    var q = mcq(topic, item[0], item[1], item[2], item[3], item[4]);
+    q.category = 'theory';
+    return q;
+  }
+
+  function numericChoice(value, unit) {
+    var abs = Math.abs(value), digits = abs < 1 ? 3 : abs < 10 ? 2 : abs < 100 ? 1 : 0;
+    return fmt(round(value, digits)) + (unit ? ' ' + unit : '');
+  }
+
+  function calculationMcqQuestion(topic, difficulty, seed, preferVisual) {
+    var base = preferVisual ? visualQuestion(topic, 'open', difficulty, seed) : null;
+    if (!base) base = openQuestion(topic, difficulty, seed);
+    var answer = Number(base.answer), candidates = [answer, answer * .5, answer * .8, answer * 1.25];
+    var correctAt = Math.abs(seed) % 4, choices = [], wrongIndex = 1;
+    for (var i = 0; i < 4; i++) {
+      if (i === correctAt) choices.push(numericChoice(candidates[0], base.unit));
+      else { choices.push(numericChoice(candidates[wrongIndex], base.unit)); wrongIndex++; }
+    }
+    var q = mcq(topic, base.prompt, choices, correctAt, base.hint, base.explanation);
+    q.formula = base.formula;
+    q.category = 'calculation';
+    if (base.visual) { q.visual = base.visual; q.applied = true; }
+    return q;
+  }
+
+  function generateQuestion(topic, type, difficulty, seed, preferVisual, category) {
+    var q = category === 'theory' ? weeklyTheoryQuestion(topic, difficulty, seed) : category === 'calculation' && type === 'mcq' ? calculationMcqQuestion(topic, difficulty, seed, preferVisual) : (preferVisual ? visualQuestion(topic, type, difficulty, seed) : null);
     if (q) {
+      q.category = q.category || category || (type === 'open' ? 'calculation' : 'mixed');
       q.difficulty = difficulty;
-      q.id = topic + '-visual-' + type + '-' + difficulty + '-' + seed + '-' + Math.random().toString(36).slice(2, 7);
+      q.id = topic + '-' + (q.visual ? 'visual-' : '') + type + '-' + difficulty + '-' + seed + '-' + Math.random().toString(36).slice(2, 7);
       return q;
     }
     if (type === 'mcq') {
@@ -488,6 +526,7 @@
     } else {
       q = openQuestion(topic, difficulty, seed);
     }
+    q.category = q.category || (type === 'open' ? 'calculation' : 'mixed');
     q.difficulty = difficulty;
     q.id = topic + '-' + type + '-' + difficulty + '-' + seed + '-' + Math.random().toString(36).slice(2, 7);
     return q;
@@ -685,8 +724,20 @@
     var mins = config.length === 15 ? 55 : 120;
     byId('summaryTimer').textContent = exam && config.timer && config.length > 8 ? mins + ' min' : 'Ei';
     byId('summaryTopics').textContent = weekly ? '4 / 4 · rajattu' : config.selected.length + ' / ' + Object.keys(topics).length + (config.weighted.length ? ' · ' + config.weighted.length + ' painotettu' : '');
+    var theoryCount = Math.round(config.length * .25), calculationCount = config.length - theoryCount;
+    byId('summaryMixRow').classList.toggle('hidden', !weekly);
+    byId('summaryMix').textContent = weekly ? theoryCount + ' teoriaa · ' + calculationCount + ' laskennallista' : '';
     byId('headerStreak').textContent = (stats.today && stats.today[todayKey]) || 0;
     byId('reviewModeCopy').textContent = wrongBank.length ? wrongBank.length + ' aiemmin väärin mennyttä tehtävää' : 'Ei vielä tallennettuja virheitä';
+  }
+
+  function updateExamLengthCopy() {
+    var regular = { 8: '8 monivalintaa', 15: '5 monivalintaa · 10 avointa', 25: '6 monivalintaa (~25 %) · 19 avointa', 30: 'Erittäin haastava · 6 monivalintaa', 50: '10 monivalintaa · 40 avointa' };
+    var weekly = { 8: '2 teoriaa · 6 laskua · 8 monivalintaa', 15: '4 teoriaa · 11 laskua', 25: '6 teoriaa · 19 laskua' };
+    document.querySelectorAll('[data-length]').forEach(function (card) {
+      var length = Number(card.dataset.length), copy = config.mode === 'weekly2' ? weekly[length] : regular[length];
+      if (copy && card.querySelector('small')) card.querySelector('small').textContent = copy;
+    });
   }
 
   function showView(name) {
@@ -716,7 +767,13 @@
     }
     var count = (config.mode === 'exam' || config.mode === 'weekly2') ? config.length : 10;
     var mcqCount = config.mode === 'practice' ? 5 : ({ 8: 8, 15: 5, 25: 6, 30: 6, 50: 10 }[count]);
-    var types = shuffle(Array(mcqCount).fill('mcq').concat(Array(count - mcqCount).fill('open')));
+    var specs;
+    if (config.mode === 'weekly2') {
+      var theoryCount = Math.round(count * .25), calculationMcqCount = mcqCount - theoryCount;
+      specs = shuffle(Array(theoryCount).fill(null).map(function () { return { type: 'mcq', category: 'theory' }; })
+        .concat(Array(calculationMcqCount).fill(null).map(function () { return { type: 'mcq', category: 'calculation' }; }))
+        .concat(Array(count - mcqCount).fill(null).map(function () { return { type: 'open', category: 'calculation' }; })));
+    } else specs = shuffle(Array(mcqCount).fill('mcq').concat(Array(count - mcqCount).fill('open'))).map(function (type) { return { type: type, category: null }; });
     var pool = [];
     config.selected.forEach(function (id) { pool.push(id); if (config.weighted.indexOf(id) !== -1) pool.push(id, id); });
     var chosen = [];
@@ -726,7 +783,7 @@
     var questions = chosen.map(function (topic, i) {
       var physicsTopic = topics[topic].domain === 'physics';
       var preferVisual = config.mode === 'weekly2' ? i % 3 === 0 : physicsTopic && i % 4 === 0;
-      return generateQuestion(topic, types[i], config.difficulty, Date.now() % 10000 + i * 17, preferVisual);
+      return generateQuestion(topic, specs[i].type, config.difficulty, Date.now() % 10000 + i * 17, preferVisual, specs[i].category);
     });
     var seconds = config.timer && count > 8 ? (count === 15 ? 55 * 60 : 120 * 60) : null;
     return { questions: questions, index: 0, answers: [], score: 0, maxPoints: questions.reduce(function (sum, q) { return sum + (q.type === 'mcq' ? 2 : 3); }, 0), timeLeft: seconds, config: JSON.parse(JSON.stringify(config)) };
@@ -775,6 +832,7 @@
     byId('quizProgress').style.width = ((session.index) / session.questions.length * 100) + '%';
     byId('questionTopic').textContent = topics[q.topic].name;
     byId('questionDifficulty').textContent = difficultyNames[q.difficulty];
+    byId('questionCategory').textContent = q.category === 'theory' ? 'Teoria' : q.category === 'calculation' ? 'Laskenta' : (q.type === 'mcq' ? 'Monivalinta' : 'Avoin');
     byId('questionText').textContent = q.prompt;
     byId('questionContext').textContent = q.type === 'open' ? 'Kirjoita pelkkä lukuarvo. Sinulla on kolme yritystä.' + (q.unit ? ' Yksikkö: ' + q.unit + '.' : '') : 'Valitse yksi vaihtoehto. Sinulla on kaksi yritystä.';
     byId('questionVisual').innerHTML = q.visual ? questionVisualMarkup(q.visual) : '';
@@ -1112,7 +1170,7 @@
       document.querySelector('.topic-tools').classList.toggle('hidden', config.mode === 'weekly2');
       byId('timerOption').classList.add('hidden'); byId('examLengths').classList.toggle('hidden', !examLike);
       byId('difficultyStep').textContent = examLike ? '03' : '02'; byId('topicsStep').textContent = examLike ? '04' : '03';
-      renderTopics(); updateSummary();
+      updateExamLengthCopy(); renderTopics(); updateSummary();
     }); });
     document.querySelectorAll('[data-length]').forEach(function (b) { b.addEventListener('click', function () { config.length = Number(b.dataset.length); config.timer = false; byId('timerEnabled').checked = false; document.querySelectorAll('[data-length]').forEach(function (x) { x.classList.toggle('selected', x === b); }); if (config.length === 30) { config.difficulty = 'extreme'; document.querySelectorAll('[data-difficulty]').forEach(function (x) { x.classList.toggle('selected', x.dataset.difficulty === 'extreme'); }); } var timed = config.length > 8; byId('timerOption').classList.toggle('hidden', !timed); byId('timerCopy').textContent = config.length === 15 ? '55 minuuttia' : '2 tuntia'; updateSummary(); }); });
     document.querySelectorAll('[data-difficulty]').forEach(function (b) { b.addEventListener('click', function () { if (config.mode === 'exam' && config.length === 30 && b.dataset.difficulty !== 'extreme') { byId('setupError').textContent = 'Mestaritentti suoritetaan erittäin haastavalla tasolla.'; return; } byId('setupError').textContent = ''; config.difficulty = b.dataset.difficulty; document.querySelectorAll('[data-difficulty]').forEach(function (x) { x.classList.toggle('selected', x === b); }); updateSummary(); }); });
