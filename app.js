@@ -37,6 +37,51 @@
   if (!stats.minigames) stats.minigames = { rapidBest: 0, memoryBest: 0, hangmanWins: 0 };
   var knownCards = load('virtapiiriCards', []);
   var wrongBank = load('virtapiiriWrongBank', []);
+  var achievementState = load('virtapiiriAchievements', { unlocked: {}, activityDates: [], exams: [], games: {}, features: {} });
+  if (!achievementState.unlocked) achievementState.unlocked = {};
+  if (!Array.isArray(achievementState.activityDates)) achievementState.activityDates = [];
+  if (!Array.isArray(achievementState.exams)) achievementState.exams = [];
+  if (!achievementState.games) achievementState.games = {};
+  ['rapid', 'memory', 'hangman'].forEach(function (game) {
+    if (!achievementState.games[game]) achievementState.games[game] = { played: false, perfect: false };
+  });
+  if (!achievementState.features) achievementState.features = {};
+  var achievementFilter = 'all';
+
+  var achievementCatalog = [
+    { id: 'first-login', title: 'Virtapiiri käynnistyy', description: 'Käy sivustolla ensimmäisen kerran.', tier: 'bronze', icon: '⌁', test: function () { return achievementState.activityDates.length > 0; } },
+    { id: 'first-exam', title: 'Ensimmäinen koitos', description: 'Suorita ensimmäinen harjoitustentti loppuun.', tier: 'bronze', icon: '✓', test: function () { return achievementState.exams.length >= 1; } },
+    { id: 'first-quick', title: 'Pikakoe', description: 'Suorita ensimmäinen nopea, 8 tehtävän tentti.', tier: 'bronze', icon: '⚡', test: function () { return hasExam(function (e) { return e.length === 8; }); } },
+    { id: 'first-minigame', title: 'Pelihalli auki', description: 'Pelaa mitä tahansa minipeliä ensimmäisen kerran.', tier: 'bronze', icon: '◆', test: function () { return playedGames().length >= 1; } },
+    { id: 'first-flashcards', title: 'Kortit pöytään', description: 'Käytä flashcardeja ensimmäisen kerran.', tier: 'bronze', icon: '▣', test: function () { return !!achievementState.features.flashcards; } },
+    { id: 'first-formula', title: 'Kaavat käyttöön', description: 'Avaa kaavapankki ensimmäisen kerran.', tier: 'bronze', icon: '∑', test: function () { return !!achievementState.features.formulaBank; } },
+    { id: 'streak-3', title: 'Hyvä alku', description: 'Saavuta kolmen päivän opiskelupäivien putki.', tier: 'bronze', icon: '3', test: function () { return currentStreak() >= 3; } },
+
+    { id: 'streak-5', title: 'Rytmi löytyi', description: 'Saavuta viiden päivän opiskelupäivien putki.', tier: 'silver', icon: '5', test: function () { return currentStreak() >= 5; } },
+    { id: 'first-medium', title: 'Keskipitkä koitos', description: 'Suorita ensimmäinen 15 tehtävän tentti.', tier: 'silver', icon: '15', test: function () { return hasExam(function (e) { return e.length === 15; }); } },
+    { id: 'first-long', title: 'Pitkäjänteinen', description: 'Suorita ensimmäinen vähintään 25 tehtävän tentti.', tier: 'silver', icon: '25', test: function () { return hasExam(function (e) { return e.length >= 25; }); } },
+    { id: 'all-lengths', title: 'Kaikki tenttipituudet', description: 'Suorita nopea, keskipitkä ja pitkä tentti.', tier: 'silver', icon: '≡', test: function () { return hasExam(function (e) { return e.length === 8; }) && hasExam(function (e) { return e.length === 15; }) && hasExam(function (e) { return e.length >= 25; }); } },
+    { id: 'all-difficulties', title: 'Neljä tasoa', description: 'Suorita tentti jokaisella vaikeustasolla.', tier: 'silver', icon: '4', test: function () { return ['easy','medium','hard','extreme'].every(function (d) { return hasExam(function (e) { return e.difficulty === d; }); }); } },
+    { id: 'first-hard', title: 'Vaikea valloitettu', description: 'Suorita ensimmäinen vaikean tason tentti.', tier: 'silver', icon: '▲', test: function () { return hasExam(function (e) { return e.difficulty === 'hard'; }); } },
+    { id: 'perfect-exam', title: 'Virheetön suoritus', description: 'Saa täydet pisteet mistä tahansa tentistä.', tier: 'silver', icon: '★', test: function () { return hasExam(function (e) { return e.perfect; }); } },
+    { id: 'all-minigames', title: 'Kolmen pelin kierros', description: 'Pelaa kaikkia kolmea minipeliä.', tier: 'silver', icon: '♟', test: function () { return playedGames().length === 3; } },
+    { id: 'formula-in-exam', title: 'Oikea työkalu', description: 'Käytä kaavapankkia ensimmäisen kerran tentin aikana.', tier: 'silver', icon: 'ƒ', test: function () { return !!achievementState.features.formulaDuringExam; } },
+    { id: 'perfect-rapid', title: 'Salamannopea', description: 'Saa Rapid-pelistä täydet 50 pistettä.', tier: 'silver', icon: '⚡', test: function () { return achievementState.games.rapid.perfect; } },
+    { id: 'perfect-memory', title: 'Täydellinen muisti', description: 'Ratkaise muistipeli kuudella siirrolla.', tier: 'silver', icon: '◫', test: function () { return achievementState.games.memory.perfect; } },
+    { id: 'perfect-hangman', title: 'Termimestari', description: 'Ratkaise hirsipuussa kuusi termiä ilman virheitä.', tier: 'silver', icon: 'A', test: function () { return achievementState.games.hangman.perfect; } },
+
+    { id: 'streak-10', title: 'Kymmenen päivän virta', description: 'Saavuta kymmenen päivän opiskelupäivien putki.', tier: 'gold', icon: '10', test: function () { return currentStreak() >= 10; } },
+    { id: 'first-extreme', title: 'Tenttivarma', description: 'Suorita ensimmäinen erittäin haastava tentti.', tier: 'gold', icon: '✦', test: function () { return hasExam(function (e) { return e.difficulty === 'extreme'; }); } },
+    { id: 'perfect-hard', title: 'Vaikea, mutta virheetön', description: 'Saa täydet pisteet vaikean tason tentistä.', tier: 'gold', icon: '★', test: function () { return hasExam(function (e) { return e.difficulty === 'hard' && e.perfect; }); } },
+    { id: 'perfect-extreme', title: 'Ääriraja rikottu', description: 'Saa täydet pisteet erittäin haastavasta tentistä.', tier: 'gold', icon: '✹', test: function () { return hasExam(function (e) { return e.difficulty === 'extreme' && e.perfect; }); } },
+    { id: 'perfect-long', title: 'Pitkä täysosuma', description: 'Saa täydet pisteet pitkästä tentistä.', tier: 'gold', icon: '◆', test: function () { return hasExam(function (e) { return e.length >= 25 && e.perfect; }); } },
+    { id: 'perfect-long-hard', title: 'Vaativa maraton', description: 'Saa täydet pisteet pitkästä vaikean tason tentistä.', tier: 'gold', icon: '♛', test: function () { return hasExam(function (e) { return e.length >= 25 && e.difficulty === 'hard' && e.perfect; }); } },
+    { id: 'perfect-long-extreme', title: 'Mestarin maraton', description: 'Saa täydet pisteet pitkästä erittäin haastavasta tentistä.', tier: 'gold', icon: '♜', test: function () { return hasExam(function (e) { return e.length >= 25 && e.difficulty === 'extreme' && e.perfect; }); } },
+    { id: 'perfect-all-minigames', title: 'Pelihallin valtias', description: 'Saavuta täydellinen tulos kaikissa minipeleissä.', tier: 'gold', icon: '♕', test: function () { return ['rapid','memory','hangman'].every(function (g) { return achievementState.games[g].perfect; }); } },
+
+    { id: 'second-chance', title: 'Sitkeä ratkaisija', description: 'Ratkaise tehtävä oikein epäonnistuneen yrityksen jälkeen.', tier: 'secret', icon: '?', hidden: true, test: function () { return !!achievementState.features.secondChance; } },
+    { id: 'all-achievements', title: 'Virtapiirin mestari', description: 'Avaa kaikki muut saavutukset, myös piilotettu.', tier: 'diamond', icon: '♦', test: function () { return achievementCatalog.filter(function (a) { return a.id !== 'all-achievements'; }).every(function (a) { return !!achievementState.unlocked[a.id]; }); } }
+  ];
 
   var formulas = [
     { topic: 'electric-basic', title: 'Varaus ja virta', formula: 'Q = I · t', symbols: 'Q varaus [C], I virta [A], t aika [s]' },
@@ -108,6 +153,141 @@
       var temp = copy[i]; copy[i] = copy[j]; copy[j] = temp;
     }
     return copy;
+  }
+
+  function localDateKey(date) {
+    var d = date || new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function currentStreak() {
+    var dates = Array.from(new Set(achievementState.activityDates)).sort();
+    if (!dates.length) return 0;
+    var cursor = new Date();
+    cursor.setHours(12, 0, 0, 0);
+    var count = 0;
+    while (dates.indexOf(localDateKey(cursor)) !== -1) {
+      count++;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return count;
+  }
+
+  function hasExam(test) { return achievementState.exams.some(test); }
+  function playedGames() { return ['rapid', 'memory', 'hangman'].filter(function (g) { return achievementState.games[g].played; }); }
+  function saveAchievements() { save('virtapiiriAchievements', achievementState); }
+
+  function showAchievementToast(achievement) {
+    var region = byId('achievementToastRegion');
+    if (!region) return;
+    var toast = document.createElement('div');
+    toast.className = 'achievement-toast ' + achievement.tier;
+    toast.setAttribute('role', 'status');
+    toast.innerHTML = '<span aria-hidden="true">' + achievement.icon + '</span><div><small>Saavutus avattu · ' + tierName(achievement.tier) + '</small><b>' + achievement.title + '</b></div>';
+    region.appendChild(toast);
+    setTimeout(function () { toast.classList.add('leaving'); setTimeout(function () { toast.remove(); }, 350); }, 4200);
+  }
+
+  function tierName(tier) { return ({ bronze: 'Pronssi', silver: 'Hopea', gold: 'Kulta', diamond: 'Timantti', secret: 'Piilosaavutus' })[tier] || tier; }
+
+  function evaluateAchievements(silent) {
+    var unlockedNow = [];
+    achievementCatalog.filter(function (a) { return a.id !== 'all-achievements'; }).forEach(function (achievement) {
+      if (!achievementState.unlocked[achievement.id] && achievement.test()) {
+        achievementState.unlocked[achievement.id] = Date.now();
+        unlockedNow.push(achievement);
+      }
+    });
+    var diamond = achievementCatalog.find(function (a) { return a.id === 'all-achievements'; });
+    if (!achievementState.unlocked[diamond.id] && diamond.test()) {
+      achievementState.unlocked[diamond.id] = Date.now();
+      unlockedNow.push(diamond);
+    }
+    if (unlockedNow.length) saveAchievements();
+    renderAchievements();
+    if (!silent) unlockedNow.forEach(showAchievementToast);
+  }
+
+  function recordFeature(name) {
+    if (achievementState.features[name]) return;
+    achievementState.features[name] = true;
+    saveAchievements();
+    evaluateAchievements(false);
+  }
+
+  function recordGame(name, perfect) {
+    var game = achievementState.games[name];
+    var changed = !game.played || (perfect && !game.perfect);
+    game.played = true;
+    if (perfect) game.perfect = true;
+    if (changed) { saveAchievements(); evaluateAchievements(false); }
+  }
+
+  function recordExamAchievements(completedSession, timedOut) {
+    if (completedSession.config.mode !== 'exam' && completedSession.config.mode !== 'weekly2') return;
+    achievementState.exams.push({
+      length: completedSession.questions.length,
+      difficulty: completedSession.config.difficulty,
+      mode: completedSession.config.mode,
+      perfect: !timedOut && completedSession.score === completedSession.maxPoints,
+      date: Date.now()
+    });
+    achievementState.exams = achievementState.exams.slice(-250);
+    saveAchievements();
+    evaluateAchievements(false);
+  }
+
+  function achievementCardMarkup(achievement) {
+    var unlocked = !!achievementState.unlocked[achievement.id];
+    var concealed = achievement.hidden && !unlocked;
+    var title = concealed ? '???' : achievement.title;
+    var description = concealed ? 'Piilotettu saavutus — löydä se kokeilemalla.' : achievement.description;
+    var tier = concealed ? 'secret' : achievement.tier;
+    var date = unlocked ? new Date(achievementState.unlocked[achievement.id]).toLocaleDateString('fi-FI') : '';
+    return '<article class="achievement-card ' + tier + ' ' + (unlocked ? 'unlocked' : 'locked') + '">' +
+      '<div class="achievement-medal" aria-hidden="true">' + (unlocked ? achievement.icon : '⌾') + '</div>' +
+      '<div class="achievement-card-copy"><span>' + (concealed ? 'PIILOSSA' : tierName(achievement.tier)) + '</span><h3>' + title + '</h3><p>' + description + '</p></div>' +
+      '<div class="achievement-state"><b aria-hidden="true">' + (unlocked ? '✓' : '🔒') + '</b><small>' + (unlocked ? date : 'Lukittu') + '</small></div></article>';
+  }
+
+  function renderAchievements() {
+    var grid = byId('achievementsGrid');
+    if (!grid) return;
+    var visible = achievementCatalog.filter(function (a) {
+      if (a.hidden) return achievementFilter === 'all';
+      return achievementFilter === 'all' || a.tier === achievementFilter;
+    });
+    grid.innerHTML = visible.length ? visible.map(achievementCardMarkup).join('') : '<div class="achievement-empty">Tässä tasossa ei ole vielä saavutuksia.</div>';
+    var unlocked = achievementCatalog.filter(function (a) { return !!achievementState.unlocked[a.id]; }).length;
+    var total = achievementCatalog.length;
+    var percent = Math.round(unlocked / total * 100);
+    byId('achievementRailCount').textContent = unlocked + ' / ' + total;
+    byId('achievementPercent').textContent = percent + '%';
+    byId('achievementSummaryCount').textContent = unlocked + ' / ' + total + ' saavutusta';
+    byId('achievementStreak').textContent = currentStreak() + (currentStreak() === 1 ? ' päivä' : ' päivää');
+    byId('achievementProgressBar').style.width = percent + '%';
+  }
+
+  function openAchievements() {
+    renderAchievements();
+    byId('achievementDrawer').classList.remove('hidden');
+    byId('achievementBackdrop').classList.remove('hidden');
+    document.body.classList.add('drawer-open');
+    byId('closeAchievements').focus();
+  }
+
+  function closeAchievements() {
+    byId('achievementDrawer').classList.add('hidden');
+    byId('achievementBackdrop').classList.add('hidden');
+    document.body.classList.remove('drawer-open');
+  }
+
+  function initializeAchievements() {
+    var today = localDateKey();
+    if (achievementState.activityDates.indexOf(today) === -1) achievementState.activityDates.push(today);
+    achievementState.activityDates = achievementState.activityDates.slice(-400);
+    saveAchievements();
+    evaluateAchievements(false);
   }
   function mcq(topic, prompt, choices, answer, hint, explanation) {
     return { topic: topic, type: 'mcq', prompt: prompt, choices: choices, answer: answer, hint: hint, explanation: explanation, formula: '' };
@@ -751,10 +931,10 @@
     var target = byId(name + 'View'); if (target) target.classList.add('active');
     document.querySelectorAll('.nav-link').forEach(function (n) { n.classList.toggle('active', n.dataset.view === name); });
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (name === 'flashcards') renderFlashcards(true);
+    if (name === 'flashcards') { renderFlashcards(true); recordFeature('flashcards'); }
     if (name === 'theory') renderTheory();
     if (name === 'progress') renderProgress();
-    if (name === 'formulas') renderFormulaBank();
+    if (name === 'formulas') { renderFormulaBank(); recordFeature('formulaBank'); }
     if (name === 'games') { renderMemory(); startHangmanRound(); }
   }
 
@@ -921,6 +1101,7 @@
     var earned = correct ? currentPointValue(q) : 0;
     if (correct) {
       session.score += earned;
+      if (session.attempts > 0) recordFeature('secondChance');
       forgetQuestion(q);
       showFeedback('Oikein — ' + earned + (earned === 1 ? ' piste. ' : ' pistettä. ') + q.explanation, true);
     } else {
@@ -959,6 +1140,7 @@
     stats.total += total; stats.correct += session.answers.filter(function (a) { return a.correct; }).length; stats.points += session.score; stats.maxPoints += session.maxPoints; stats.today[todayKey] = (stats.today[todayKey] || 0) + total;
     Object.keys(groups).forEach(function (id) { if (!stats.byDomain[id]) stats.byDomain[id] = { total: 0, correct: 0 }; stats.byDomain[id].total += groups[id].total; stats.byDomain[id].correct += groups[id].correct; });
     save('virtapiiriStats', stats); updateSummary();
+    recordExamAchievements(session, timedOut);
     window.scrollTo({ top: byId('resultsPanel').offsetTop - 80, behavior: 'smooth' });
   }
   function startTimer() {
@@ -1005,6 +1187,8 @@
   function openFormulaDrawer() {
     if (!session) return;
     session.usedFormula = true; updatePointPreview();
+    recordFeature('formulaBank');
+    if (session.config.mode === 'exam' || session.config.mode === 'weekly2') recordFeature('formulaDuringExam');
     var q = session.questions[session.index];
     var relevant = formulas.filter(function (f) { return f.topic === q.topic; });
     if (!relevant.length) relevant = formulas.filter(function (f) { return topics[f.topic].domain === topics[q.topic].domain; });
@@ -1049,6 +1233,7 @@
   var rapidState = null, rapidTimer = null;
   function startRapid() {
     clearInterval(rapidTimer);
+    recordGame('rapid', false);
     rapidState = { cards: shuffle(flashcards).slice(0, 10), index: 0, score: 0, locked: false, startedAt: 0 };
     byId('rapidIntro').classList.add('hidden'); byId('rapidResult').classList.add('hidden'); byId('rapidPlay').classList.remove('hidden');
     renderRapidQuestion();
@@ -1086,6 +1271,7 @@
     byId('rapidPlay').classList.add('hidden'); byId('rapidResult').classList.remove('hidden');
     byId('rapidResult').innerHTML = '<span class="kicker">RAPID VALMIS</span><strong>' + rapidState.score + ' / 50</strong><h2>' + (rapidState.score >= 40 ? 'Sähkönopea!' : rapidState.score >= 25 ? 'Hyvä tempo!' : 'Uusi kierros tekee terää.') + '</h2><button id="rapidAgain" class="btn primary">Pelaa uudelleen</button>';
     stats.minigames.rapidBest = Math.max(stats.minigames.rapidBest || 0, rapidState.score); save('virtapiiriStats', stats);
+    recordGame('rapid', rapidState.score === 50);
     byId('rapidAgain').addEventListener('click', startRapid);
   }
 
@@ -1104,13 +1290,14 @@
   function flipMemory(index) {
     if (memoryState.locked) return;
     var card = memoryState.cards[index]; if (card.open || card.matched) return;
+    recordGame('memory', false);
     card.open = true; memoryState.open.push(index); paintMemory();
     if (memoryState.open.length < 2) return;
     memoryState.moves++;
     var a = memoryState.cards[memoryState.open[0]], b = memoryState.cards[memoryState.open[1]];
     if (a.pair === b.pair && a.type !== b.type) {
       a.matched = b.matched = true; memoryState.matched++; memoryState.open = []; paintMemory();
-      if (memoryState.matched === 6) { var best = stats.minigames.memoryBest; stats.minigames.memoryBest = !best || memoryState.moves < best ? memoryState.moves : best; save('virtapiiriStats', stats); byId('memoryPairs').textContent = 'Valmis · ' + memoryState.moves + ' siirtoa'; }
+      if (memoryState.matched === 6) { var best = stats.minigames.memoryBest; stats.minigames.memoryBest = !best || memoryState.moves < best ? memoryState.moves : best; save('virtapiiriStats', stats); byId('memoryPairs').textContent = 'Valmis · ' + memoryState.moves + ' siirtoa'; recordGame('memory', memoryState.moves === 6); }
     } else {
       memoryState.locked = true;
       setTimeout(function () { a.open = b.open = false; memoryState.open = []; memoryState.locked = false; paintMemory(); }, 850);
@@ -1140,6 +1327,7 @@
   function guessHangman(value) {
     if (!hangState || hangState.finished) return;
     var guess = normalized(value), target = normalized(hangState.card.term); if (!guess) return;
+    recordGame('hangman', false);
     finishHangman(guess === target);
   }
   function finishHangman(won) {
@@ -1147,7 +1335,7 @@
     if (won) hangState.wins++; else hangState.mistakes++;
     paintHangman(true);
     byId('hangMessage').textContent = won ? 'Oikein: ' + hangState.card.term + '. Uusi termi alkaa pian.' : 'Väärin — termi oli ' + hangState.card.term + '. Uusi termi alkaa pian.';
-    if (won) { stats.minigames.hangmanWins = (stats.minigames.hangmanWins || 0) + 1; save('virtapiiriStats', stats); }
+    if (won) { stats.minigames.hangmanWins = (stats.minigames.hangmanWins || 0) + 1; save('virtapiiriStats', stats); if (hangState.wins >= 6 && hangState.mistakes === 0) recordGame('hangman', true); }
     if (hangState.mistakes >= 6) {
       byId('hangMessage').textContent += ' Kierros päättyi tulokseen ' + hangState.wins + ' oikein.';
       setTimeout(function () { startHangmanRound(false); }, 2200);
@@ -1156,6 +1344,14 @@
 
   function bind() {
     document.querySelectorAll('[data-view], [data-view-link]').forEach(function (el) { el.addEventListener('click', function (e) { e.preventDefault(); showView(el.dataset.view || el.dataset.viewLink); }); });
+    byId('openAchievements').addEventListener('click', openAchievements);
+    byId('closeAchievements').addEventListener('click', closeAchievements);
+    byId('achievementBackdrop').addEventListener('click', closeAchievements);
+    document.querySelectorAll('[data-achievement-filter]').forEach(function (button) { button.addEventListener('click', function () {
+      achievementFilter = button.dataset.achievementFilter;
+      document.querySelectorAll('[data-achievement-filter]').forEach(function (b) { b.classList.toggle('active', b === button); });
+      renderAchievements();
+    }); });
     document.querySelectorAll('[data-mode]').forEach(function (b) { b.addEventListener('click', function () {
       var previousMode = config.mode;
       config.mode = b.dataset.mode;
@@ -1192,13 +1388,13 @@
     byId('formulaSearch').addEventListener('input', renderFormulaBank); byId('formulaFilter').addEventListener('change', renderFormulaBank);
     byId('formulaClear').addEventListener('click', function () { byId('formulaSearch').value = ''; byId('formulaFilter').value = 'all'; renderFormulaBank(); byId('formulaSearch').focus(); });
     document.querySelectorAll('[data-formula-query]').forEach(function (button) { button.addEventListener('click', function () { byId('formulaSearch').value = button.dataset.formulaQuery; renderFormulaBank(); }); });
-    document.addEventListener('keydown', function (event) { if (event.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { event.preventDefault(); showView('formulas'); byId('formulaSearch').focus(); } if (event.key === 'Escape' && document.activeElement === byId('formulaSearch')) { byId('formulaSearch').value = ''; renderFormulaBank(); } });
+    document.addEventListener('keydown', function (event) { if (event.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { event.preventDefault(); showView('formulas'); byId('formulaSearch').focus(); } if (event.key === 'Escape' && !byId('achievementDrawer').classList.contains('hidden')) closeAchievements(); else if (event.key === 'Escape' && document.activeElement === byId('formulaSearch')) { byId('formulaSearch').value = ''; renderFormulaBank(); } });
     document.querySelectorAll('.game-tab').forEach(function (tab) { tab.addEventListener('click', function () { document.querySelectorAll('.game-tab').forEach(function (x) { x.classList.toggle('active', x === tab); }); document.querySelectorAll('.game-panel').forEach(function (p) { p.classList.toggle('active', p.id === tab.dataset.game + 'Game'); }); if (tab.dataset.game === 'memory') renderMemory(); if (tab.dataset.game === 'hangman') startHangmanRound(); }); });
     document.querySelectorAll('[data-game-jump]').forEach(function (button) { button.addEventListener('click', function () { showView('games'); var tab = document.querySelector('[data-game="' + button.dataset.gameJump + '"]'); if (tab) tab.click(); }); });
     byId('startRapid').addEventListener('click', startRapid); byId('resetMemory').addEventListener('click', renderMemory);
     byId('hangForm').addEventListener('submit', function (e) { e.preventDefault(); guessHangman(byId('hangInput').value); });
   }
 
-  renderDomains(); renderTopics(); renderTheory(); bind(); updateSummary(); renderFlashcards(true); renderFormulaBank(); renderMemory(); startHangmanRound();
+  renderDomains(); renderTopics(); renderTheory(); bind(); updateSummary(); renderFlashcards(true); renderFormulaBank(); renderMemory(); startHangmanRound(); initializeAchievements();
 }());
 
