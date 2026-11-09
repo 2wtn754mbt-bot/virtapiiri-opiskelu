@@ -21,6 +21,7 @@
     </a>
     <nav class="main-nav" aria-label="Päänavigaatio">
       <button class="nav-link active" data-view="home">Etusivu</button>
+      <button class="nav-link automation-nav-link" data-view="automation">Automaatio</button>
       <button class="nav-link" data-view="theory">Teoria</button>
       <button class="nav-link" data-view="practice">Harjoittelu</button>
       <button class="nav-link" data-view="flashcards">Flashcards</button>
@@ -72,9 +73,9 @@
       </div>
 
       <section class="status-strip" aria-label="Alustan ominaisuudet">
-        <div><strong>14</strong><span>harjoiteltavaa aihetta</span></div>
+        <div><strong>20</strong><span>harjoiteltavaa aihetta</span></div>
         <div><strong>4</strong><span>vaikeustasoa</span></div>
-        <div><strong>6</strong><span>tenttimuotoa</span></div>
+        <div><strong>9</strong><span>tenttimuotoa</span></div>
         <div><strong>∞</strong><span>muuntuvaa tehtävää</span></div>
       </section>
 
@@ -105,6 +106,63 @@
           <p>Rajaa aiheet, painota heikkoja kohtia ja valitse sopiva vaikeustaso.</p>
         </div>
         <button class="btn light" data-view="practice">Rakenna tentti <span>→</span></button>
+      </section>
+    </section>
+
+    <section id="automationView" class="view automation-view" aria-labelledby="automationTitle">
+      <div class="automation-hero">
+        <div class="automation-hero-copy">
+          <span class="automation-kicker">AUTOMAATIOTEKNIIKAN PERUSTEET</span>
+          <h1 id="automationTitle">Havaitse.<br><em>Päättele.</em> Ohjaa.</h1>
+          <p>Opiskele automaatioprojektin koko elinkaari, järjestelmät, logiikka, instrumentointi, mittaaminen ja teollinen tiedonsiirto yhtenä selkeänä kokonaisuutena.</p>
+          <div class="automation-hero-actions"><button class="auto-btn primary" data-auto-scroll="autoExamBuilder">Rakenna automaatiotentti <span>→</span></button><button class="auto-btn ghost" data-auto-theory="0">Aloita teoriasta</button></div>
+        </div>
+        <div class="automation-process" aria-label="Automaation suljettu säätöpiiri">
+          <div class="process-node sensor"><span>01</span><b>MITTAA</b><small>Anturi &amp; lähetin</small></div>
+          <div class="process-arrow">→</div>
+          <div class="process-node logic"><span>02</span><b>PÄÄTÄ</b><small>PLC / DCS / logiikka</small></div>
+          <div class="process-arrow">→</div>
+          <div class="process-node actuator"><span>03</span><b>OHJAA</b><small>Venttiili &amp; moottori</small></div>
+          <div class="process-feedback"><span>PROSESSIPALAUTE</span></div>
+        </div>
+      </div>
+
+      <section class="automation-section">
+        <div class="automation-section-head"><div><span>01 / TEORIA</span><h2>Kuusi ydinmoduulia</h2></div><p>Teoriapaketit perustuvat kurssiaineistoihin ja päättyvät aina monivalintakertaukseen.</p></div>
+        <div id="automationModuleGrid" class="automation-module-grid"></div>
+      </section>
+
+      <section id="autoExamBuilder" class="automation-exam-section">
+        <div class="automation-section-head"><div><span>02 / TENTTI</span><h2>Automaatiotekniikan perusteet</h2></div><p>Valitse painotus, vaikeustaso ja tentin pituus. Kaikki kysymykset rajataan automaatiotekniikan kuuteen aihealueeseen.</p></div>
+        <div class="automation-builder">
+          <div class="auto-builder-main">
+            <fieldset class="auto-fieldset"><legend>1. Kysymysten painotus</legend><div class="auto-choice-grid three">
+              <button type="button" class="auto-choice" data-auto-mix="theory"><span>75 / 25</span><b>Teoriakeskeinen</b><small>Käsitteet, järjestelmät, dokumentit ja toimintaperiaatteet</small></button>
+              <button type="button" class="auto-choice" data-auto-mix="calculation"><span>25 / 75</span><b>Laskennalliskeskeinen</b><small>Skaalaus, AD-muunnos, logiikka, paine, virtaus ja mitoitus</small></button>
+              <button type="button" class="auto-choice selected" data-auto-mix="mixed"><span>50 / 50</span><b>Sekoitus</b><small>Tasapainoinen yhdistelmä teoriaa ja laskentaa</small></button>
+            </div></fieldset>
+            <fieldset class="auto-fieldset"><legend>2. Vaikeustaso</legend><div class="auto-choice-grid four">
+              <button type="button" class="auto-choice selected" data-auto-difficulty="easy"><span>PERUSTA</span><b>Helppo</b><small>Lukion taso</small></button>
+              <button type="button" class="auto-choice" data-auto-difficulty="medium"><span>INSINÖÖRI</span><b>Keskivaikea</b><small>AMK-läpäisytaso</small></button>
+              <button type="button" class="auto-choice" data-auto-difficulty="hard"><span>SYVENTÄVÄ</span><b>Vaikea</b><small>Vahva jatko-opintopohja</small></button>
+              <button type="button" class="auto-choice" data-auto-difficulty="extreme"><span>TENTTIVARMA</span><b>Erittäin haastava</b><small>Vaativa soveltaminen</small></button>
+            </div></fieldset>
+            <fieldset class="auto-fieldset"><legend>3. Pituus</legend><div class="auto-length-grid">
+              <button type="button" class="auto-length selected" data-auto-length="8"><b>8</b><span>Nopea</span><small>kaikki monivalintaa</small></button>
+              <button type="button" class="auto-length" data-auto-length="15"><b>15</b><span>Keskipitkä</span><small>55 min valinnainen</small></button>
+              <button type="button" class="auto-length" data-auto-length="25"><b>25</b><span>Pitkä</span><small>2 h valinnainen</small></button>
+              <button type="button" class="auto-length" data-auto-length="30"><b>30</b><span>Mestari</span><small>erittäin haastava</small></button>
+              <button type="button" class="auto-length" data-auto-length="50"><b>50</b><span>Laaja</span><small>2 h valinnainen</small></button>
+            </div></fieldset>
+            <label id="autoTimerOption" class="auto-timer hidden"><input id="autoTimerEnabled" type="checkbox"><span></span><b>Suorita aikarajalla</b><small id="autoTimerCopy">55 minuuttia</small></label>
+          </div>
+          <aside class="auto-builder-summary">
+            <span>VALMIS TENTTI</span><h3 id="autoSummaryName">Sekoitus · helppo</h3>
+            <dl><div><dt>Tehtäviä</dt><dd id="autoSummaryCount">8</dd></div><div><dt>Teoriaa</dt><dd id="autoSummaryTheory">4</dd></div><div><dt>Laskentaa</dt><dd id="autoSummaryCalculation">4</dd></div><div><dt>Aikaraja</dt><dd id="autoSummaryTimer">Ei</dd></div></dl>
+            <p>Nopeassa tentissä kaikki tehtävät ovat monivalintaa. Muissa tenteissä laskennalliset tehtävät ovat pääosin avoimia.</p>
+            <button id="startAutomationExam" type="button" class="auto-btn primary full">Aloita automaatiotentti <span>↗</span></button>
+          </aside>
+        </div>
       </section>
     </section>
 
@@ -304,6 +362,12 @@
     <section id="sourcesView" class="view" aria-labelledby="sourcesTitle">
       <div class="page-head compact"><span class="kicker">LÄHTEET</span><h1 id="sourcesTitle">Jatka syvemmälle</h1><p>Tehtävät ovat tätä sivustoa varten kirjoitettuja. Alla olevat Finna-tietueet auttavat löytämään täydentävää opiskelumateriaalia kirjastoista.</p></div>
       <div class="source-list">
+        <div class="source-material automation-source"><span>PDF</span><div><b>01_APER_automaatioprojekti</b><small>Automaatioprojektin määrittely, suunnittelu, toteutus, FAT, asennus, SAT, käyttöönotto ja elinkaari</small></div></div>
+        <div class="source-material automation-source"><span>PDF</span><div><b>Automaatiojärjestelmät v3</b><small>Automaatiopyramidi, PLC, I/O, HMI, SCADA, MES, ERP, DCS ja hajautettu automaatio</small></div></div>
+        <div class="source-material automation-source"><span>PDF</span><div><b>03_APER_booleanalgebra</b><small>Boolen algebra, totuustaulut, perusportit, sievennys ja Ladder-ohjelmointi</small></div></div>
+        <div class="source-material automation-source"><span>PDF</span><div><b>05_APER_PIkaaviot</b><small>Putkitus- ja instrumentointikaaviot, standardit, kirjainlyhenteet ja säätöpiirit</small></div></div>
+        <div class="source-material automation-source"><span>PDF</span><div><b>03_APER_Mittaustekniikka 2026-10</b><small>Kalibrointi, lämpötila-, paine-, virtaus- ja pinnankorkeusmittaukset</small></div></div>
+        <div class="source-material automation-source"><span>PDF</span><div><b>Viestit ja ADDA</b><small>Analoginen ja digitaalinen I/O, AD/DA-muunnos, standardiviestit ja kenttäväylät</small></div></div>
         <div class="source-material"><span>PDF</span><div><b>Kinematiikka tf 2026</b><small>Nopeus, kiihtyvyys, kuvaajat, vakiokiihtyvä liike ja vapaa putoaminen</small></div></div>
         <div class="source-material"><span>PDF</span><div><b>Voima tf 2026 syksy</b><small>Vapaakappalekuvat, Newtonin lait, voimien komponentit, massa, painovoima ja paino</small></div></div>
         <div class="source-material"><span>PDF</span><div><b>Kitkavoima, massa pv paino</b><small>Lepo- ja liikekitka, kitkakertoimet sekä voima-anturin tulkinta</small></div></div>
