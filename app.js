@@ -5,7 +5,8 @@
     { id: 'electricity', name: 'Sähköfysiikka & sähköoppi', desc: 'Varaus, kentät, potentiaali, teho ja sähkömagnetismin sovellukset.', topics: ['electric-basic', 'electric-applied', 'electrical-theory'] },
     { id: 'math', name: 'Tekniikan matematiikka', desc: 'Geometria, vektorit, kompleksiluvut, funktiot ja riippuvuudet.', topics: ['geometry', 'vectors', 'complex', 'functions'] },
     { id: 'physics', name: 'Tekniikan fysiikka', desc: 'Kinematiikka, dynamiikka, voimat, massa, paino, kitka ja lämpöoppi.', topics: ['kinematics', 'dynamics', 'force-motion', 'mass-weight', 'friction', 'thermal'] },
-    { id: 'circuits', name: 'Tasasähköpiirit', desc: 'Ohmin laki, Kirchhoffin lait, sarja- ja rinnankytkennät sekä teho.', topics: ['dc-circuits'] }
+    { id: 'circuits', name: 'Tasasähköpiirit', desc: 'Ohmin laki, Kirchhoffin lait, sarja- ja rinnankytkennät sekä teho.', topics: ['dc-circuits'] },
+    { id: 'automation', name: 'Automaatiotekniikan perusteet', desc: 'Projektit, PLC ja DCS, Boolen logiikka, PI-kaaviot, mittaukset sekä teolliset viestit.', topics: ['auto-project', 'auto-systems', 'auto-logic', 'auto-pid', 'auto-measurement', 'auto-signals'] }
   ];
 
   var topics = {
@@ -22,12 +23,20 @@
     'mass-weight': { name: 'Massa, painovoima ja paino', domain: 'physics' },
     'friction': { name: 'Kitka', domain: 'physics' },
     'thermal': { name: 'Lämpöoppi', domain: 'physics' },
-    'dc-circuits': { name: 'Tasasähköpiirit', domain: 'circuits' }
+    'dc-circuits': { name: 'Tasasähköpiirit', domain: 'circuits' },
+    'auto-project': { name: 'Automaatioprojekti ja elinkaari', domain: 'automation' },
+    'auto-systems': { name: 'Automaatiojärjestelmät, PLC ja DCS', domain: 'automation' },
+    'auto-logic': { name: 'Boolen algebra ja Ladder', domain: 'automation' },
+    'auto-pid': { name: 'PI-kaaviot ja instrumentointi', domain: 'automation' },
+    'auto-measurement': { name: 'Mittaustekniikka', domain: 'automation' },
+    'auto-signals': { name: 'Viestit, väylät ja AD/DA-muunnos', domain: 'automation' }
   };
 
   var difficultyNames = { easy: 'Helppo', medium: 'Keskivaikea', hard: 'Vaikea', extreme: 'Erittäin haastava' };
   var weekly2Topics = ['kinematics', 'force-motion', 'mass-weight', 'friction'];
+  var automationTopics = ['auto-project', 'auto-systems', 'auto-logic', 'auto-pid', 'auto-measurement', 'auto-signals'];
   var config = { mode: 'practice', length: 10, difficulty: 'easy', timer: false, selected: Object.keys(topics), weighted: [] };
+  var autoExamConfig = { mix: 'mixed', difficulty: 'easy', length: 8, timer: false };
   var session = null;
   var timerHandle = null;
   var todayKey = new Date().toISOString().slice(0, 10);
@@ -135,7 +144,19 @@
     { topic: 'thermal', title: 'Carnot-hyötysuhde', formula: 'η = 1 − T_c/T_h', symbols: 'Lämpötilat kelvineinä' },
     { topic: 'dc-circuits', title: 'Ohmin laki', formula: 'U = RI', symbols: 'U jännite [V], R resistanssi [Ω], I virta [A]' },
     { topic: 'dc-circuits', title: 'Rinnankytkentä', formula: '1/R = 1/R₁ + 1/R₂ + …', symbols: 'Käänteisresistanssit summautuvat' },
-    { topic: 'dc-circuits', title: 'Jännitteenjako', formula: 'U₂ = U · R₂/(R₁ + R₂)', symbols: 'Sarjaan kytketyt vastukset' }
+    { topic: 'dc-circuits', title: 'Jännitteenjako', formula: 'U₂ = U · R₂/(R₁ + R₂)', symbols: 'Sarjaan kytketyt vastukset' },
+    { topic: 'auto-project', title: 'Testauksen läpäisyaste', formula: 'p = n_hyväksytty / n_kaikki · 100 %', symbols: 'p läpäisyaste, n hyväksyttyjen ja kaikkien testien lukumäärä' },
+    { topic: 'auto-systems', title: 'PLC:n ohjelmakierrot', formula: 'N = t / T_scan', symbols: 'N kierrosten määrä, t tarkasteluaika, T_scan yhden ohjelmakierron aika' },
+    { topic: 'auto-systems', title: 'I/O-moduulien määrä', formula: 'n = ⌈N_IO / N_kanavaa⌉', symbols: 'Pyöristä tarvittavien moduulien määrä aina ylöspäin' },
+    { topic: 'auto-logic', title: 'Totuustaulun rivit', formula: 'N = 2ⁿ', symbols: 'n riippumattomien Boolen muuttujien määrä' },
+    { topic: 'auto-logic', title: 'De Morganin lait', formula: '¬(A·B) = ¬A + ¬B;  ¬(A+B) = ¬A·¬B', symbols: 'Negaation vieminen sulkujen sisään vaihtaa AND- ja OR-operaatiot' },
+    { topic: 'auto-measurement', title: 'Hydrostaattinen paine', formula: 'p = ρgh', symbols: 'ρ tiheys [kg/m³], g putoamiskiihtyvyys, h nestepatsaan korkeus' },
+    { topic: 'auto-measurement', title: 'Massavirta', formula: 'qₘ = ρqᵥ', symbols: 'qₘ massavirta [kg/s], qᵥ tilavuusvirta [m³/s]' },
+    { topic: 'auto-measurement', title: 'Reynoldsin luku', formula: 'Re = ρvd / μ', symbols: 'v virtausnopeus, d putken halkaisija, μ dynaaminen viskositeetti' },
+    { topic: 'auto-signals', title: 'Lineaarinen standardiviestin skaalaus', formula: 'y = y₀ + (x−x₀)(y₁−y₀)/(x₁−x₀)', symbols: 'Muuntaa esimerkiksi 4–20 mA viestin mittausalueelle' },
+    { topic: 'auto-signals', title: 'AD-muuntimen tasot', formula: 'N = 2ⁿ', symbols: 'n bittien määrä, N kvantisointitasojen lukumäärä' },
+    { topic: 'auto-signals', title: 'AD-muuntimen resoluutio', formula: 'Δx = (x_max−x_min)/2ⁿ', symbols: 'Pienin erotettava askel koko mittausalueella' },
+    { topic: 'auto-signals', title: 'Nyquistin ehto', formula: 'f_s ≥ 2f_max', symbols: 'Näytteenottotaajuus vähintään kaksinkertainen signaalin suurimpaan taajuuteen nähden' }
   ];
 
   function load(key, fallback) {
@@ -224,7 +245,7 @@
   }
 
   function recordExamAchievements(completedSession, timedOut) {
-    if (completedSession.config.mode !== 'exam' && completedSession.config.mode !== 'weekly2') return;
+    if (completedSession.config.mode !== 'exam' && completedSession.config.mode !== 'weekly2' && completedSession.config.mode !== 'automation') return;
     achievementState.exams.push({
       length: completedSession.questions.length,
       difficulty: completedSession.config.difficulty,
@@ -460,6 +481,114 @@
       medium: [['Kirchhoffin virtalaki perustuu minkä suureen säilymiseen?', ['energian', 'varauksen', 'massan', 'resistanssin'], 1, 'Solmuun ei kerry ideaalitilanteessa nettovarausta.', 'Virtalaki seuraa sähkövarauksen säilymisestä.']],
       hard: [['Théveninin teoreemassa lineaarinen kaksinapainen piiri korvataan…', ['virtalähteellä yksin', 'jännitelähteellä ja sarjaresistanssilla', 'kondensaattorilla', 'kahdella rinnakkaisella jännitelähteellä'], 1, 'Ekvivalentissa on avoimen piirin jännite ja sisäinen resistanssi.', 'Thévenin-ekvivalentti on ideaalinen jännitelähde sarjassa ekvivalenttiresistanssin kanssa.']],
       extreme: [['Mikä ehto maksimoi kuormaan siirtyvän tehon resistiivisessä Thévenin-piirissä?', ['R_L = 0', 'R_L = R_Th', 'R_L → ∞', 'R_L = 2R_Th'], 1, 'Etsi kuormaresistanssin suhde lähteen sisäiseen resistanssiin.', 'Maksimitehonsiirtolauseen mukaan R_L = R_Th.']]
+    },
+    'auto-project': {
+      easy: [
+        ['Mikä käynnistää automaatioprojektin määrittelyvaiheen?', ['toteutuslupa', 'esiselvitykseen perustuva suunnittelupäätös', 'SAT-testi', 'purkamispäätös'], 1, 'Määrittely seuraa esiselvitystä.', 'Esiselvityksen perusteella tehty suunnittelupäätös käynnistää määrittelyn.'],
+        ['Mikä on esisuunnittelun tärkein tulos?', ['as-built-kuvat', 'käyttäjävaatimukset', 'testausraportti', 'kaappilayout'], 1, 'Tarkastelu tehdään loppukäyttäjän näkökulmasta.', 'Esisuunnittelun tärkein tulos on käyttäjävaatimusten määrittely.']
+      ],
+      medium: [
+        ['Mikä erottaa FAT- ja SAT-testauksen toisistaan?', ['FAT tehdään toimittajalla ennen toimitusta, SAT kohteessa', 'SAT tehdään aina ennen FAT:ia', 'FAT testaa vain dokumentteja', 'niillä ei ole eroa'], 0, 'Ajattele sanoja factory ja site.', 'FAT tehdään tehtaalla ennen toimitusta ja SAT asennuskohteessa osana hyväksyntää.'],
+        ['Missä vaiheessa toiminnallinen kuvaus on keskeinen tulos?', ['esisuunnittelu', 'perussuunnittelu', 'purkaminen', 'kunnossapito'], 1, 'Asiakas ja toimittaja täydentävät käyttäjävaatimuksia yhdessä.', 'Perussuunnittelussa käyttäjävaatimukset täydennetään toiminnalliseksi kuvaukseksi.']
+      ],
+      hard: [
+        ['Miksi as-built-dokumentaatio on kriittinen?', ['se korvaa kaiken testauksen', 'se kuvaa toteutuneen järjestelmän kunnossapitoa ja muutoksia varten', 'se on vain myyntiesite', 'sitä käytetään vain purussa'], 1, 'Toteutunut järjestelmä voi poiketa suunnittelun lähtötilanteesta.', 'As-built-kuvat dokumentoivat lopullisen toteutuksen ja ovat muutosten, vianhaun ja kunnossapidon perusta.'],
+        ['Milloin toiminnallinen testaus voidaan aloittaa?', ['ennen asennusta', 'mekaanisen valmiuden jälkeen', 'ennen toteutuslupaa', 'vasta purkuvaiheessa'], 1, 'Järjestelmän pitää olla asennettu testausta varten.', 'Mekaaninen valmius on toiminnallisen testauksen käynnistävä etappi.']
+      ],
+      extreme: [
+        ['Mikä testausstrategia pienentää parhaiten myöhäisen integraatiovirheen riskiä?', ['kaikki testit vasta SAT:ssa', 'moduuli-, integraatio- ja FAT-testit jäljitettävästi vaatimuksiin', 'vain silmämääräinen tarkastus', 'testauksen korvaaminen auditoinnilla'], 1, 'Virheet kannattaa havaita mahdollisimman aikaisin ja suhteuttaa vaatimuksiin.', 'Vaatimuksiin jäljitettävä porrastettu testaus löytää virheet ennen kohdeasennusta.'],
+        ['Turvallisuuteen liittyvän järjestelmän kelpoistuksessa tärkeintä on…', ['pelkkä tuotantonopeus', 'todennettu riippumattomuus, vaatimusten jäljitettävyys ja dokumentoidut testit', 'mahdollisimman vähäinen dokumentointi', 'vain käyttöliittymän ulkoasu'], 1, 'Turvallisuustoiminto pitää pystyä osoittamaan suunnitellusti toimivaksi.', 'Kelpoistus perustuu dokumentoituun näyttöön siitä, että vaatimukset ja riippumattomuus toteutuvat.']
+      ]
+    },
+    'auto-systems': {
+      easy: [
+        ['Mikä on PLC:n ohjelmakierron oikea perusjärjestys?', ['päivitä lähdöt, lue tulot, sammuta', 'lue tulot, suorita ohjelma, päivitä lähdöt', 'suorita ohjelma, irrota I/O:t, lue tulot', 'vain suorita ohjelma'], 1, 'Tuloista tehdään päätökset ennen lähtöjen päivitystä.', 'PLC lukee tulot, suorittaa ohjelman ja päivittää lähdöt toistuvassa syklissä.'],
+        ['Mikä laite on automaatiopyramidin kenttätasolla?', ['ERP', 'PLC:n suunnitteluasema', 'Pt100-anturi', 'MES'], 2, 'Kenttätaso on fyysinen rajapinta prosessiin.', 'Pt100 on prosessia mittaava kenttälaite.']
+      ],
+      medium: [
+        ['Mikä erottaa HMI:n ja SCADA:n tyypillisesti?', ['HMI on paikallinen käyttöliittymä, SCADA laajempi valvonta- ja tiedonkeruujärjestelmä', 'HMI on aina ERP', 'SCADA ei kerää dataa', 'niillä ei ole eroa'], 0, 'Vertaa yhden laitteen käyttöliittymää koko järjestelmän valvontaan.', 'HMI palvelee usein paikallista laitetta, kun SCADA yhdistää laajemman valvonnan, ohjauksen ja tiedonkeruun.'],
+        ['Miksi modulaarinen PLC on laajennettava?', ['ohjelma on aina lyhyt', 'siihen voidaan lisätä I/O- ja erikoismoduuleja', 'se ei sisällä prosessoria', 'kaikki kaapelit ovat langattomia'], 1, 'Modulaarisuus liittyy laitteistokokoonpanoon.', 'Modulaariseen PLC:hen voidaan lisätä I/O-, väylä-, servo- ja muita moduuleja.']
+      ],
+      hard: [
+        ['Mikä on hajautetun järjestelmän keskeinen käytettävyys -etu?', ['kaikki riippuu yhdestä ohjaimesta', 'yhden ohjauslaitteen vika ei välttämättä pysäytä koko prosessia', 'I/O:t ovat aina kaukana prosessista', 'verkkoa ei tarvita'], 1, 'Ohjaus on jaettu useisiin prosessiasemiin.', 'Hajautus voi rajata yksittäisen vian vaikutuksen vain osaan prosessia.'],
+        ['Mikä IEC 61131-3 -kieli muistuttaa relekaaviota?', ['ST', 'LD', 'SFC', 'IL'], 1, 'Kieli esittää virtakiskot, koskettimet ja kelat.', 'Ladder Diagram eli LD perustuu relekaavioiden esitystapaan.']
+      ],
+      extreme: [
+        ['Miksi PLC:n ja DCS:n raja on nykyään hämärtynyt?', ['PLC ei enää käytä ohjelmistoa', 'PLC kykenee hajautukseen ja jatkuvaan säätöön, DCS puolestaan nopeisiin toimintoihin', 'DCS ei sisällä verkkoa', 'molemmat ovat pelkkiä antureita'], 1, 'Molempien suorituskyky ja integraatiot ovat laajentuneet.', 'Modernit PLC- ja DCS-ratkaisut kattavat yhä enemmän samoja käyttötapauksia.'],
+        ['Mikä arkkitehtuuriperiaate tukee parhaiten vikasietoista prosessia?', ['yksi keskus ilman varmistusta', 'hajautetut ohjaimet, redundantit kriittiset palvelut ja rajatut vika-alueet', 'kaikki I/O yhden pitkän kaapelin päässä', 'SCADA korvaa kenttäohjauksen'], 1, 'Tavoite on estää yhden vian leviäminen koko järjestelmään.', 'Hajautus, redundanssi ja vika-alueiden erottelu parantavat käytettävyyttä.']
+      ]
+    },
+    'auto-logic': {
+      easy: [
+        ['Milloin AND-portin lähtö on 1?', ['kun ainakin yksi tulo on 1', 'vain kun kaikki tulot ovat 1', 'kun tulot eroavat', 'aina'], 1, 'AND vastaa sarjaan kytkettyjä ehtoja.', 'AND-operaatio on tosi vain, kun kaikki ehdot ovat tosia.'],
+        ['Mitä NOT-portti tekee?', ['summaa tulot', 'kääntää totuusarvon', 'kertoo tulot', 'viivästää signaalia aina'], 1, 'Invertteri komplementoi muuttujan.', 'NOT muuttaa arvon 0 arvoksi 1 ja arvon 1 arvoksi 0.']
+      ],
+      medium: [
+        ['Milloin XOR-portin lähtö on 1 kahdella tulolla?', ['molemmat ovat 0', 'molemmat ovat 1', 'tulot ovat erisuuret', 'aina kun A on 1'], 2, 'Poissulkeva TAI tunnistaa erilaisuuden.', 'XOR on tosi, kun täsmälleen toinen tuloista on tosi.'],
+        ['Lauseke H = (S1 OR S2) AND NOT S3 tarkoittaa, että H aktivoituu…', ['vain kaikkien ollessa 1', 'kun S1 tai S2 on 1 ja S3 on 0', 'vain S3:n ollessa 1', 'aina'], 1, 'Tarkastele sulku ensin ja sen jälkeen estoehtoa.', 'Lähtö aktivoituu kummasta tahansa käynnistysehdosta, jos estävä S3 ei ole aktiivinen.']
+      ],
+      hard: [
+        ['De Morganin lain mukaan NOT(A AND B) on…', ['NOT A AND NOT B', 'NOT A OR NOT B', 'A OR B', 'A XOR B'], 1, 'Negaation vieminen sulkujen sisään vaihtaa operaation.', '¬(A·B) = ¬A + ¬B.'],
+        ['Miksi Boolen lauseketta sievennetään?', ['jotta totuustaulu kasvaa', 'jotta toteutus tarvitsee vähemmän logiikkaa ja on helpompi ylläpitää', 'jotta kaikki lähdöt ovat 1', 'jotta PLC:n I/O:t katoavat'], 1, 'Yksinkertaisempi sama toiminta on tavoite.', 'Sievennys vähentää portteja tai ohjelmakoodia ja parantaa luettavuutta sekä ylläpidettävyyttä.']
+      ],
+      extreme: [
+        ['Mikä lauseke toteuttaa enemmistöfunktion kolmelle tulolle?', ['ABC', 'AB + AC + BC', 'A + B + C', 'A XOR B XOR C'], 1, 'Lähtö on 1, kun vähintään kaksi tuloa on 1.', 'Pareittaiset tulot AB + AC + BC kattavat kaikki vähintään kahden ykkösen tapaukset.'],
+        ['Miksi turvalogiikan diagnoosipeittoa ei voi päätellä pelkästä Boolen lausekkeesta?', ['lauseke ei kuvaa vikamalleja, diagnostiikkaa eikä laitteiston riippumattomuutta', 'Boolen algebra ei käytä nollaa', 'PLC ei lue tuloja', 'totuustaulu on aina tyhjä'], 0, 'Toimintalogiikka ja vikasietoisuus ovat eri tarkastelutasoja.', 'Turvallisuuden arviointi vaatii vikamallit, arkkitehtuurin ja diagnostiikan, ei vain normaalitoiminnan lauseketta.']
+      ]
+    },
+    'auto-pid': {
+      easy: [
+        ['Mitä PI-kaavio kuvaa?', ['vain sähkösyöttöä', 'prosessin putkituksen, laitteet, mittaukset ja ohjaukset', 'vain ohjelmakoodia', 'yrityksen organisaatiota'], 1, 'P&ID on prosessin keskeinen lähtötietodokumentti.', 'PI-kaavio yhdistää prosessivirtauksen, laitteet sekä mittaus- ja ohjaustoiminnot.'],
+        ['Mitä ensimmäinen kirjain T tarkoittaa instrumenttitunnuksessa?', ['aikaa', 'lämpötilaa', 'lähetintä', 'turvatoimintoa'], 1, 'Ensimmäinen kirjain kertoo mitattavan suureen.', 'T tarkoittaa lämpötilaa.']
+      ],
+      medium: [
+        ['Mitä tunnus FT tarkoittaa?', ['virtauslähetintä', 'lämpötilan tallennusta', 'painekytkintä', 'pinnankorkeusventtiiliä'], 0, 'F on suure ja T toiminto.', 'F = virtaus ja T = lähetintoiminta, joten FT on virtauslähetin.'],
+        ['Mitä tunnus LIC tarkoittaa?', ['pinnankorkeuden osoittavaa säädintä', 'virtausventtiiliä', 'painehälytystä', 'lämpötilakytkintä'], 0, 'L kertoo suureen, I osoituksen ja C säädön.', 'LIC on pinnankorkeutta osoittava säädin.']
+      ],
+      hard: [
+        ['Miksi PI-kaavio pidetään ajan tasalla as-built-muodossa?', ['vain ulkoasun vuoksi', 'muutokset, kunnossapito ja turvallinen käyttö perustuvat todelliseen toteutukseen', 'sillä korvataan käyttöohje', 'standardi kieltää suunnitteluversion'], 1, 'Kaavion pitää vastata laitoksen nykytilaa.', 'Ajantasainen PI-kaavio tukee vianhakua, muutoksia, riskiarvioita ja kunnossapitoa.'],
+        ['Mikä tunnus kuvaa virtausta säätävää venttiiliä?', ['PT', 'FCV', 'LS', 'TIR'], 1, 'F = virtaus, C = säätö, V = venttiili.', 'FCV on virtaussäädön toimilaite eli säätöventtiili.']
+      ],
+      extreme: [
+        ['Mitä puuttuu, jos PI-kaavio näyttää mittauksen ja venttiilin mutta ei niiden välistä signaaliyhteyttä?', ['prosessiputki', 'ohjauspiirin toiminnallinen yhteys ja signaalin kulku', 'säiliön tilavuus aina', 'kaikki laitetunnukset'], 1, 'Ohjauspiirin ymmärtämiseksi tarvitaan tiedon kulkureitti.', 'Signaaliviiva kertoo, miten mittaus välittyy säätimelle ja toimilaitteelle.'],
+        ['Mikä on paras lähtökohta PI-kaavion muutoksen turvallisuusarvioinnille?', ['muutetaan kuva vasta asennuksen jälkeen', 'muutoshallinta, vaikutusanalyysi ja ristiriidattomat tunnukset kaikissa dokumenteissa', 'poistetaan vanhat tunnukset ilman jälkeä', 'käytetään vain suullista tietoa'], 1, 'Prosessi- ja automaatiodokumenttien pitää säilyä yhdenmukaisina.', 'Hallittu muutos edellyttää vaikutusten arviointia ja dokumenttien jäljitettävää päivitystä.']
+      ]
+    },
+    'auto-measurement': {
+      easy: [
+        ['Mitä kalibrointi tarkoittaa?', ['mittalaitteen virheen selvittämistä referenssiin nähden', 'mittalaitteen korjaamista aina', 'signaalin suodattamista', 'anturin vaihtamista'], 0, 'Kalibrointi vertaa, viritys korjaa.', 'Kalibroinnissa selvitetään mittalaitteen virhe vertailumittalaitteeseen nähden.'],
+        ['Mikä on Pt100-anturin resistanssi 0 °C:ssa?', ['0 Ω', '100 Ω', '273 Ω', '1000 Ω'], 1, 'Nimi sisältää vertailuarvon.', 'Pt100:n nimellisresistanssi on 100 ohmia lämpötilassa 0 °C.']
+      ],
+      medium: [
+        ['Mitä mittauskohina on?', ['hitaasti muuttuva asetusarvo', 'mittasignaalia vääristävä usein korkeataajuinen vaihtelu', 'kalibrointitodistus', 'mittausalueen alaraja'], 1, 'Suodatus pyrkii vähentämään sitä.', 'Mittauskohina on hyötysignaalia vääristävää vaihtelua.'],
+        ['Mikä suure yhdistää massavirran ja tilavuusvirran?', ['lämpötila', 'tiheys', 'viskositeetti yksin', 'paine yksin'], 1, 'Massavirta on tilavuusvirta kertaa aineen massa tilavuutta kohti.', 'qₘ = ρqᵥ, joten yhdistävä suure on tiheys.']
+      ],
+      hard: [
+        ['Mitä suuri Reynoldsin luku yleensä merkitsee putkivirtauksessa?', ['laminaarista virtausta', 'turbulentin virtauksen todennäköisyyttä', 'nollanopeutta', 'puristumatonta ainetta aina'], 1, 'Inertiavoimien merkitys kasvaa suhteessa viskoosisiin voimiin.', 'Suuri Re viittaa turbulenttiin eli pyörteiseen virtaukseen.'],
+        ['Miksi kuristuselin aiheuttaa pysyvän painehäviön?', ['virtaus saa energiaa', 'osa mekaanisesta energiasta dissipoituu kitkaan ja pyörteisiin', 'tiheys muuttuu aina nollaksi', 'paine-eroanturi kuluttaa paineen'], 1, 'Todellinen virtaus ei ole kitkaton.', 'Kuristus ja pyörteet muuttavat osan virtausenergiasta lämmöksi.']
+      ],
+      extreme: [
+        ['Miksi paine-erolähettimen signaalista otetaan usein neliöjuuri kuristusvirtauksessa?', ['paine-ero on verrannollinen virtauksen neliöön', 'paine-ero on aina negatiivinen', 'tiheys on nolla', 'jotta signaali kaksinkertaistuu'], 0, 'Bernoullin perusteella Δp ∝ v².', 'Neliöjuurto linearisoi signaalin virtausnopeuden suhteen.'],
+        ['Mikä yhdistelmä pienentää mittauksen kokonaisepävarmuutta parhaiten?', ['suuri resoluutio ilman kalibrointia', 'jäljitettävä kalibrointi, sopiva anturi, hallittu asennus ja epävarmuusbudjetti', 'pelkkä suodatus', 'mahdollisimman pitkä kaapeli'], 1, 'Epävarmuus syntyy koko mittausketjusta.', 'Luotettava mittaus edellyttää koko ketjun ja sen epävarmuuslähteiden hallintaa.']
+      ]
+    },
+    'auto-signals': {
+      easy: [
+        ['Mitä 4 mA tarkoittaa 4–20 mA -viestissä normaalisti?', ['100 % mittausarvoa', 'elävää nollaa eli 0 % mittausaluetta', 'kaapelivikaa aina', '50 % mittausarvoa'], 1, 'Alaraja ei ole nolla milliampeeria.', '4 mA on elävä nolla, jolloin alle 4 mA voi ilmaista vikaa.'],
+        ['Mitä AD-muunnin tekee?', ['muuttaa digitaalisen analogiseksi', 'muuttaa analogisen signaalin digitaalisiksi lukuarvoiksi', 'vain vahvistaa virtaa', 'poistaa kaikki virheet'], 1, 'A tarkoittaa analogista ja D digitaalista.', 'AD-muunnin näytteistää ja kvantisoi analogisen signaalin digitaaliseksi.']
+      ],
+      medium: [
+        ['Kuinka monta kvantisointitasoa 8-bittisellä AD-muuntimella on?', ['8', '16', '128', '256'], 3, 'Tasojen määrä on 2ⁿ.', '2⁸ = 256 kvantisointitasoa.'],
+        ['Miksi virtaviesti kestää pitkiä kaapelivetoja jänniteviestiä paremmin?', ['virta ei kulje johtimessa', 'johtimen jännitehäviö ei suoraan muuta sarjapiirin mitattua virtaa', 'se ei tarvitse kaapelia', 'se on aina digitaalinen'], 1, 'Sarjapiirin sama virta kulkee koko silmukassa.', 'Virtaviestissä kaapelin resistanssin vaikutus näkyy ensisijaisesti tarvittavana käyttöjännitteenä, ei mittausarvon muutoksena.']
+      ],
+      hard: [
+        ['Mikä on Nyquistin ehdon tarkoitus?', ['taata ettei näytteistyksessä synny laskostumista kaistarajoitetulle signaalille', 'poistaa kvantisointivirhe kokonaan', 'muuttaa 4 mA arvoksi 0 mA', 'määrittää PLC:n I/O-määrä'], 0, 'Näytteenottotaajuutta verrataan signaalin korkeimpaan taajuuteen.', 'Näytteenottotaajuuden pitää olla vähintään kaksinkertainen korkeimpaan säilytettävään taajuuteen nähden.'],
+        ['Mikä on kenttäväylän keskeinen etu erillisiin 4–20 mA -kaapeleihin nähden?', ['yksi viesti kaapelia kohti', 'useat laitteet ja tietotyypit voivat käyttää samaa väylää', 'diagnostiikka ei ole mahdollista', 'kaapelointi lisääntyy aina'], 1, 'Digitaalisessa viestissä voidaan välittää osoitettua dataa.', 'Kenttäväylä vähentää kaapelointia ja välittää mittausten lisäksi tila-, diagnostiikka- ja asetustietoja.']
+      ],
+      extreme: [
+        ['Miksi anti-alias-suodatin sijoitetaan ennen AD-muunninta?', ['digitaalinen suodatus voi aina palauttaa laskostuneet taajuudet', 'näytteenoton jälkeen laskostunutta sisältöä ei voida yksikäsitteisesti erottaa alkuperäisestä', 'se kasvattaa bittimäärää', 'se muuttaa DA-muuntimen AD-muuntimeksi'], 1, 'Laskostuminen tapahtuu itse näytteenotossa.', 'Kaistanrajoitus on tehtävä analogisesti ennen näytteenottoa.'],
+        ['Mitä viestin eheystarkistus kenttäväylässä ensisijaisesti havaitsee?', ['prosessin väärän asetusarvon merkityksen', 'siirrossa muuttuneet bitit', 'anturin kalibrointivirheen aina', 'kaikki ohjelmointivirheet'], 1, 'Tarkistus lasketaan viestin bittisisällöstä.', 'CRC- tai muu tarkiste havaitsee tiedonsiirtovirheitä, ei välttämättä prosessiarvon semanttista virhettä.']
+      ]
     }
   };
 
@@ -523,7 +652,7 @@
   }
 
   function openQuestion(topic, difficulty, seed) {
-    if (difficulty === 'extreme') return extremeQuestion(topic, seed);
+    if (difficulty === 'extreme' && automationTopics.indexOf(topic) === -1) return extremeQuestion(topic, seed);
     var n = Math.abs(seed) + 3;
     if (topic === 'electric-basic') {
       if (difficulty === 'easy') { var I = 2 + n % 5, t = 3 + n % 6; return numeric(topic, 'Johtimessa kulkee ' + I + ' A virta ' + t + ' sekunnin ajan. Kuinka suuri varaus siirtyy?', I * t, .02, 'C', 'Mieti, kuinka virta liittyy varaukseen ja aikaan.', 'Q = I · t', 'Varaus on Q = ' + I + ' A · ' + t + ' s = ' + (I * t) + ' C.'); }
@@ -602,6 +731,55 @@
       if (difficulty === 'medium') { var alpha = 12e-6, L = 2 + n % 5; return numeric(topic, 'Terästangon pituus on ' + L + ' m. Lämpötila nousee ' + delta + ' °C ja pituuden lämpötilakerroin on 12·10⁻⁶ 1/°C. Laske pituuden muutos millimetreinä.', round(alpha * L * delta * 1000, 3), .03, 'mm', 'Kerro alkuperäinen pituus lämpötilakertoimella ja lämpötilan muutoksella.', 'ΔL = αL₀ΔT', 'Pituuden muutos on ' + fmt(round(alpha * L * delta * 1000, 3)) + ' mm.'); }
       var hot = 500 + (n % 5) * 50, cold = 280 + (n % 4) * 10; return numeric(topic, 'Ideaalinen Carnot-kone toimii lämpötilojen ' + hot + ' K ja ' + cold + ' K välillä. Laske teoreettinen maksimihyötysuhde prosentteina.', round((1 - cold / hot) * 100, 2), .03, '%', 'Käytä absoluuttisia lämpötiloja; ne on jo annettu kelvineinä.', 'η = 1 − T_c/T_h', 'Maksimihyötysuhde on ' + fmt(round((1 - cold / hot) * 100, 2)) + ' %.');
     }
+    if (topic === 'auto-project') {
+      var allTests = 40 + (n % 7) * 10, failedTests = 2 + n % 9, passedTests = allTests - failedTests;
+      return numeric(topic, 'FAT-testisuunnitelmassa on ' + allTests + ' testiä, joista ' + failedTests + ' hylätään. Laske hyväksyttyjen testien osuus prosentteina.', round(passedTests / allTests * 100, 2), .02, '%', 'Laske ensin hyväksyttyjen testien määrä ja jaa se kaikkien testien määrällä.', 'p = n_hyväksytty / n_kaikki · 100 %', 'Hyväksyttyjen osuus on ' + passedTests + '/' + allTests + ' · 100 % = ' + fmt(round(passedTests / allTests * 100, 2)) + ' %.');
+    }
+    if (topic === 'auto-systems') {
+      if (difficulty === 'easy' || difficulty === 'medium') {
+        var scanMs = 4 + n % 9, duration = 1 + n % 5;
+        return numeric(topic, 'PLC:n ohjelmakierros kestää ' + scanMs + ' ms. Kuinka monta täyttä ohjelmakiertoa PLC ehtii suorittaa ' + duration + ' sekunnissa?', Math.floor(duration * 1000 / scanMs), .005, 'kierrosta', 'Muunna sekunnit millisekunneiksi ja jaa kokonaisaika yhden kierroksen kestolla. Huomioi vain täydet kierrokset.', 'N = ⌊t / T_scan⌋', 'Täysiä ohjelmakiertoja ehtii ' + Math.floor(duration * 1000 / scanMs) + '.');
+      }
+      var ioPoints = 80 + (n % 9) * 17, channels = pick([8, 16, 32], n);
+      return numeric(topic, 'Järjestelmä tarvitsee ' + ioPoints + ' digitaalista I/O-pistettä. Yhdessä moduulissa on ' + channels + ' kanavaa. Kuinka monta moduulia vähintään tarvitaan?', Math.ceil(ioPoints / channels), .005, 'moduulia', 'Jakojäännös tarkoittaa, että tarvitaan vielä yksi moduuli. Pyöristä ylöspäin.', 'n = ⌈N_IO / N_kanavaa⌉', 'Moduuleja tarvitaan vähintään ' + Math.ceil(ioPoints / channels) + '.');
+    }
+    if (topic === 'auto-logic') {
+      if (difficulty === 'easy') {
+        var vars = 2 + n % 4;
+        return numeric(topic, 'Totuustaulussa on ' + vars + ' riippumatonta Boolen muuttujaa. Kuinka monta tuloriviä taulukkoon tarvitaan?', Math.pow(2, vars), .005, 'riviä', 'Jokaisella muuttujalla on kaksi mahdollista arvoa.', 'N = 2ⁿ', 'Rivejä tarvitaan 2^' + vars + ' = ' + Math.pow(2, vars) + '.');
+      }
+      var A = n % 2, B = Math.floor(n / 2) % 2, C = Math.floor(n / 3) % 2;
+      var logicResult = ((A || B) && !C) ? 1 : 0;
+      return numeric(topic, 'Laske Boolen lausekkeen H = (A OR B) AND NOT C arvo, kun A = ' + A + ', B = ' + B + ' ja C = ' + C + '. Vastaa 0 tai 1.', logicResult, .005, '', 'Ratkaise ensin sulkeissa oleva OR, käännä sitten C ja tee lopuksi AND.', 'H = (A + B)·¬C', 'Lausekkeen arvo on ' + logicResult + '.');
+    }
+    if (topic === 'auto-pid') {
+      var tempLoops = 1 + n % 4, flowLoops = 1 + (n * 2) % 5, levelLoops = 1 + (n * 3) % 3;
+      return numeric(topic, 'PI-kaaviossa on ' + tempLoops + ' lämpötilan, ' + flowLoops + ' virtauksen ja ' + levelLoops + ' pinnankorkeuden säätöpiiriä. Kuinka monta yksilöitävää säätöpiiritunnusta tarvitaan yhteensä?', tempLoops + flowLoops + levelLoops, .005, 'tunnusta', 'Jokainen itsenäinen säätöpiiri tarvitsee yksilöllisen tunnuksen.', 'N = N_T + N_F + N_L', 'Tunnuksia tarvitaan ' + (tempLoops + flowLoops + levelLoops) + '.');
+    }
+    if (topic === 'auto-measurement') {
+      if (difficulty === 'easy' || difficulty === 'medium') {
+        var heightM = round(1.5 + (n % 8) * .5, 1), density = pick([800, 900, 1000], n);
+        return numeric(topic, 'Avoimessa säiliössä on nestettä ' + fmt(heightM) + ' m. Nesteen tiheys on ' + density + ' kg/m³. Laske pohjan hydrostaattinen ylipaine kilopascaleina käyttäen g = 9,81 m/s².', round(density * 9.81 * heightM / 1000, 2), .03, 'kPa', 'Kerro tiheys, putoamiskiihtyvyys ja nestepatsaan korkeus. Muunna pascalit kilopascaleiksi.', 'p = ρgh', 'Ylipaine on ' + fmt(round(density * 9.81 * heightM / 1000, 2)) + ' kPa.');
+      }
+      if (difficulty === 'hard') {
+        var qv = round(.01 + (n % 8) * .005, 3), rho = 850 + (n % 5) * 25;
+        return numeric(topic, 'Putkessa kulkee nestettä tilavuusvirralla ' + fmt(qv) + ' m³/s ja tiheydellä ' + rho + ' kg/m³. Laske massavirta.', round(rho * qv, 3), .03, 'kg/s', 'Massavirta saadaan kertomalla tilavuusvirta tiheydellä.', 'qₘ = ρqᵥ', 'Massavirta on ' + fmt(round(rho * qv, 3)) + ' kg/s.');
+      }
+      var rhoRe = 1000, velRe = round(1 + (n % 7) * .3, 1), diameterRe = round(.03 + (n % 5) * .01, 2), muRe = .001;
+      return numeric(topic, 'Vesi virtaa nopeudella ' + fmt(velRe) + ' m/s putkessa, jonka halkaisija on ' + fmt(diameterRe) + ' m. Käytä ρ = 1000 kg/m³ ja μ = 0,001 Pa·s. Laske Reynoldsin luku.', round(rhoRe * velRe * diameterRe / muRe, 0), .02, '', 'Reynoldsin luku on dimensioton. Sijoita arvot suoraan kaavaan.', 'Re = ρvd/μ', 'Reynoldsin luku on noin ' + round(rhoRe * velRe * diameterRe / muRe, 0) + '.');
+    }
+    if (topic === 'auto-signals') {
+      if (difficulty === 'easy' || difficulty === 'medium') {
+        var currentMa = 4 + (n % 9) * 2, maxRange = 100 + (n % 5) * 50;
+        return numeric(topic, 'Lähetin skaalaa mittausalueen 0–' + maxRange + ' yksikköä virtaviestiksi 4–20 mA. Mikä mittausarvo vastaa virtaa ' + currentMa + ' mA?', round((currentMa - 4) / 16 * maxRange, 2), .02, '', 'Poista ensin elävä nolla 4 mA ja suhteuta jäljelle jäävä virta 16 mA:n alueeseen.', 'M = (I−4 mA)/16 mA · M_max', 'Mittausarvo on ' + fmt(round((currentMa - 4) / 16 * maxRange, 2)) + '.');
+      }
+      if (difficulty === 'hard') {
+        var bits = 8 + n % 5, span = pick([100, 200, 500], n);
+        return numeric(topic, bits + '-bittinen AD-muunnin kattaa mittausalueen 0–' + span + ' yksikköä. Laske yhden kvantisointiaskeleen suuruus.', round(span / Math.pow(2, bits), 4), .04, 'yksikköä', 'Laske ensin kvantisointitasojen määrä 2ⁿ ja jaa mittausalue sillä.', 'Δx = mittausalue / 2ⁿ', 'Askel on ' + fmt(round(span / Math.pow(2, bits), 4)) + ' yksikköä.');
+      }
+      var fmax = 20 + (n % 9) * 10;
+      return numeric(topic, 'Mitattavan signaalin korkein säilytettävä taajuus on ' + fmax + ' Hz. Mikä on Nyquistin ehdon mukainen pienin näytteenottotaajuus?', 2 * fmax, .005, 'Hz', 'Näytteistä vähintään kaksi kertaa signaalin nopeinta vaihtelua kohti.', 'f_s ≥ 2f_max', 'Pienin teoreettinen näytteenottotaajuus on ' + (2 * fmax) + ' Hz.');
+    }
     var R1 = 2 + n % 8, R2 = 3 + (n * 2) % 9, U = 10 + (n % 6) * 2;
     if (difficulty === 'easy') return numeric(topic, 'Jännite ' + U + ' V kytketään vastukseen ' + R1 + ' Ω. Laske virta.', round(U / R1, 3), .02, 'A', 'Ratkaise virta Ohmin laista.', 'I = U/R', 'Virta on ' + fmt(round(U / R1, 3)) + ' A.');
     if (difficulty === 'medium') return numeric(topic, 'Vastukset ' + R1 + ' Ω ja ' + R2 + ' Ω ovat rinnan. Laske yhteisresistanssi.', round(R1 * R2 / (R1 + R2), 3), .03, 'Ω', 'Rinnankytkennässä johtavuudet summautuvat.', '1/R = 1/R₁ + 1/R₂', 'Yhteisresistanssi on ' + fmt(round(R1 * R2 / (R1 + R2), 3)) + ' Ω.');
@@ -663,7 +841,8 @@
 
   function weeklyTheoryQuestion(topic, difficulty, seed) {
     var list = concepts[topic][difficulty];
-    var allowed = weeklyTheoryIndexes[topic][difficulty] || list.map(function (_, i) { return i; });
+    var topicIndexes = weeklyTheoryIndexes[topic] || {};
+    var allowed = topicIndexes[difficulty] || list.map(function (_, i) { return i; });
     var item = list[pick(allowed, seed)];
     var q = mcq(topic, item[0], item[1], item[2], item[3], item[4]);
     q.category = 'theory';
@@ -678,7 +857,7 @@
   function calculationMcqQuestion(topic, difficulty, seed, preferVisual) {
     var base = preferVisual ? visualQuestion(topic, 'open', difficulty, seed) : null;
     if (!base) base = openQuestion(topic, difficulty, seed);
-    var answer = Number(base.answer), candidates = [answer, answer * .5, answer * .8, answer * 1.25];
+    var answer = Number(base.answer), step = Math.max(Math.abs(answer) * .2, 1), candidates = [answer, answer + step, answer - step, answer + 2 * step];
     var correctAt = Math.abs(seed) % 4, choices = [], wrongIndex = 1;
     for (var i = 0; i < 4; i++) {
       if (i === correctAt) choices.push(numericChoice(candidates[0], base.unit));
@@ -745,7 +924,38 @@
     ['thermal', 'Entropia', 'Energian hajaantumista ja termodynaamisten prosessien suuntaa kuvaava tilasuure.'],
     ['dc-circuits', 'Ohmin laki', 'Lineaarisen vastuksen jännitteen, virran ja resistanssin yhteys: U = RI.'],
     ['dc-circuits', 'Kirchhoffin virtalaki', 'Solmuun tulevien virtojen summa on yhtä suuri kuin solmusta lähtevien virtojen summa.'],
-    ['dc-circuits', 'Thévenin-ekvivalentti', 'Lineaarinen kaksinapainen piiri korvataan ideaalijännitelähteellä ja sarjaresistanssilla.']
+    ['dc-circuits', 'Thévenin-ekvivalentti', 'Lineaarinen kaksinapainen piiri korvataan ideaalijännitelähteellä ja sarjaresistanssilla.'],
+    ['auto-project', 'Käyttäjävaatimus', 'Loppukäyttäjän näkökulmasta määritelty vaatimus sille, mitä järjestelmän pitää tehdä ja millä reunaehdoilla.'],
+    ['auto-project', 'Toiminnallinen kuvaus', 'Perussuunnittelun keskeinen dokumentti, joka kuvaa järjestelmän suunnitellun toiminnan toteutusta varten.'],
+    ['auto-project', 'FAT', 'Factory Acceptance Test: järjestelmän tehdashyväksyntätestaus ennen toimitusta asiakkaan kohteeseen.'],
+    ['auto-project', 'SAT', 'Site Acceptance Test: kohteessa asennuksen jälkeen tehtävä hyväksyntä- tai koeajotestaus.'],
+    ['auto-project', 'As-built-dokumentti', 'Dokumentti, joka vastaa lopullista toteutunutta järjestelmää eikä vain alkuperäistä suunnitelmaa.'],
+    ['auto-systems', 'PLC', 'Programmable Logic Controller: teollisuuteen suunniteltu ohjelmoitava ohjain, joka lukee tuloja ja ohjaa lähtöjä.'],
+    ['auto-systems', 'DCS', 'Distributed Control System: hajautettu automaatiojärjestelmä, jossa ohjaus ja I/O:t sijaitsevat lähellä prosessia.'],
+    ['auto-systems', 'HMI', 'Human Machine Interface: ihmisen ja koneen välinen paikallinen käyttöliittymä.'],
+    ['auto-systems', 'SCADA', 'Laaja valvonta-, ohjaus- ja tiedonkeruujärjestelmä koko prosessin tai laitoksen seurantaan.'],
+    ['auto-systems', 'Ohjelmakierto', 'PLC:n toistuva sykli: tulojen luku, ohjelman suoritus ja lähtöjen päivitys.'],
+    ['auto-systems', 'I/O', 'Input/Output: automaatiojärjestelmän fyysiset tulot antureilta ja lähdöt toimilaitteille.'],
+    ['auto-logic', 'Boolen algebra', 'Kahden totuusarvon 0 ja 1 avulla tehtävää loogista päättelyä ja laskentaa.'],
+    ['auto-logic', 'AND', 'Looginen JA-operaatio, jonka lähtö on 1 vain, kun kaikki ehdot ovat tosia.'],
+    ['auto-logic', 'OR', 'Looginen TAI-operaatio, jonka lähtö on 1, kun vähintään yksi ehto on tosi.'],
+    ['auto-logic', 'XOR', 'Poissulkeva TAI, jonka lähtö on kahdella tulolla 1 silloin, kun tulot ovat erisuuret.'],
+    ['auto-logic', 'Ladder Diagram', 'IEC 61131-3:n graafinen PLC-ohjelmointikieli, joka muistuttaa relekytkentäkaaviota.'],
+    ['auto-logic', 'Totuustaulu', 'Taulukko, joka esittää loogisen lausekkeen lähdön kaikilla mahdollisilla tuloyhdistelmillä.'],
+    ['auto-pid', 'PI-kaavio', 'Putkitus- ja instrumentointikaavio, joka esittää prosessin laitteet, putkistot, mittaukset ja ohjaukset.'],
+    ['auto-pid', 'FT', 'Flow Transmitter: virtauslähetin. F kertoo suureen ja T lähetintoiminnon.'],
+    ['auto-pid', 'LIC', 'Level Indicating Controller: pinnankorkeutta osoittava säädin.'],
+    ['auto-pid', 'FCV', 'Flow Control Valve: virtausta säätävä venttiili eli ohjauspiirin toimilaite.'],
+    ['auto-measurement', 'Kalibrointi', 'Mittalaitteen näyttämän virheen selvittäminen jäljitettävään referenssiin verrattuna.'],
+    ['auto-measurement', 'Viritys', 'Mittalaitteen havaitun näyttämävirheen korjaaminen mahdollisimman lähelle referenssiarvoa.'],
+    ['auto-measurement', 'Pt100', 'Platinavastuslämpötila-anturi, jonka nimellisresistanssi on 100 Ω lämpötilassa 0 °C.'],
+    ['auto-measurement', 'Reynoldsin luku', 'Dimensioton luku, joka kuvaa inertia- ja viskoosisten voimien suhdetta virtauksessa.'],
+    ['auto-measurement', 'Hydrostaattinen paine', 'Nestepatsaan massasta syntyvä paine p = ρgh.'],
+    ['auto-signals', 'Elävä nolla', '4–20 mA -viestin 4 mA:n alaraja, jonka alittuminen voi paljastaa anturi- tai kaapelivian.'],
+    ['auto-signals', 'AD-muunnos', 'Analogisen signaalin suodatus, näytteistys, kvantisointi ja koodaus digitaalisiksi arvoiksi.'],
+    ['auto-signals', 'Kvantisointi', 'Näytteiden pyöristäminen lähimpään käytettävissä olevaan digitaaliseen tasoon.'],
+    ['auto-signals', 'Nyquistin ehto', 'Näytteenottotaajuuden pitää olla vähintään kaksinkertainen signaalin korkeimpaan taajuuteen nähden.'],
+    ['auto-signals', 'Kenttäväylä', 'Digitaalinen verkko, jossa useat anturit, toimilaitteet ja ohjaimet jakavat saman tiedonsiirtoväylän.']
   ].map(function (c, i) { return { id: i, topic: c[0], term: c[1], definition: c[2] }; });
 
   var theoryPackages = [
@@ -825,6 +1035,117 @@
       ]
     }
   ];
+  var automationTheoryStart = theoryPackages.length;
+  theoryPackages = theoryPackages.concat([
+    {
+      id: 'auto-project', label: 'Automaatioprojekti', title: 'Vaatimuksesta elinkaaren hallintaan',
+      lead: 'Automaatioprojekti etenee määrittelystä suunnitteluun, toteutukseen, asennukseen, testaukseen, käyttöönottoon ja kunnossapitoon. Jokaisella vaiheella on oma käynnistävä etappinsa, tavoitteensa, dokumenttinsa ja hyväksymiskriteerinsä.',
+      bullets: [
+        'Esisuunnittelu määrittelee käyttäjävaatimukset, reunaehdot, alustavat kustannukset ja investoinnin hyödyt loppukäyttäjän näkökulmasta.',
+        'Perussuunnittelussa käyttäjä ja toimittaja täydentävät vaatimukset toiminnalliseksi kuvaukseksi ja toimitussopimuksen pohjaksi.',
+        'Järjestelmä- ja toteutussuunnittelussa syntyvät ohjelmisto-, laite-, moduuli-, verkko- ja testaussuunnitelmat sekä I/O-listat.',
+        'Toteutus sisältää ohjelmoinnin, valmistuksen, moduulitestit, integraatiotestit ja FAT-testauksen. Asennuksen jälkeen seuraavat kylmä- ja kuumatestaus sekä SAT.',
+        'As-built-dokumentaatio, muutosten hallinta ja kunnossapito pitävät järjestelmän turvallisena ja käytettävänä koko elinkaaren ajan.'
+      ],
+      formulas: [['p = n_hyväksytty/n_kaikki · 100 %', 'testien läpäisyaste'], ['poikkeama = toteutunut − suunniteltu', 'aikataulu- tai kustannuspoikkeaman perusajatus']],
+      example: ['Pakkauslinjan automaatioprojektin hyväksyntäpolku', ['Kirjaa käyttäjävaatimukset turvallisuudelle, suorituskyvylle, käytettävyydelle ja huollettavuudelle.', 'Muunna vaatimukset testattaviksi toiminnallisiksi ominaisuuksiksi.', 'Testaa moduulit ja integraatiot ennen FAT:ia, jotta kohteeseen ei siirretä tunnettuja virheitä.', 'Varmista asennukset, suorita toiminnallinen testaus ja SAT sekä tallenna poikkeamat.', 'Päivitä lopuksi kaikki toteutusta vastaaviksi as-built-dokumenteiksi.']],
+      questions: [
+        ['Mikä on esisuunnittelun tärkein tulos?', ['FAT-raportti', 'käyttäjävaatimukset', 'as-built-kuvat', 'purkusuunnitelma'], 1, 'Esisuunnittelu kuvaa tarpeen käyttäjän näkökulmasta.'],
+        ['Missä FAT tehdään?', ['toimittajan tehtaalla ennen toimitusta', 'vain tuotannon aikana', 'aina purkuvaiheessa', 'vain etäyhteydellä'], 0, 'F tulee sanasta factory.'],
+        ['Miksi as-built-kuvat ovat tärkeitä?', ['ne ovat markkinointia', 'ne vastaavat todellista toteutusta kunnossapitoa ja muutoksia varten', 'ne korvaavat testit', 'niitä ei päivitetä'], 1, 'Kunnossapidon pitää tietää, mitä kohteessa oikeasti on.']
+      ]
+    },
+    {
+      id: 'auto-systems', label: 'PLC, DCS ja pyramidit', title: 'Kentältä valvomoon ja liiketoimintaan',
+      lead: 'Automaatiojärjestelmä yhdistää kenttälaitteet, ohjausalgoritmit, valvonnan ja ylemmät tuotannonohjausjärjestelmät. PLC soveltuu erityisesti nopeaan kone- ja sekvenssiohjaukseen, DCS laajoihin hajautettuihin prosesseihin, mutta niiden rajat ovat nykyään lähentyneet.',
+      bullets: [
+        'Kenttätason anturit ovat järjestelmän aistit ja toimilaitteet sen lihakset. I/O muodostaa fyysisen rajapinnan prosessin ja ohjaimen välille.',
+        'PLC suorittaa jatkuvaa ohjelmakiertoa: tulot luetaan, ohjelma käsitellään ja lähdöt päivitetään muutamien millisekuntien välein.',
+        'HMI tarjoaa paikallisen käyttöliittymän. SCADA yhdistää laajemman valvonnan, ohjauksen, hälytykset, trendit ja tiedonkeruun.',
+        'DCS hajauttaa prosessiasemat ja I/O:t kentälle. Hajautus vähentää kaapelointia, helpottaa laajentamista ja rajaa yksittäisiä vikoja.',
+        'MES ohjaa tuotantoa tehdastasolla ja ERP yhdistää koko yrityksen tilaukset, talouden, tuotannon ja logistiikan.'
+      ],
+      formulas: [['N = t/T_scan', 'ohjelmakiertojen määrä tarkasteluajassa'], ['n = ⌈N_IO/N_kanavaa⌉', 'tarvittavien I/O-moduulien vähimmäismäärä']],
+      example: ['PLC-ohjattu automaattiovi', ['Tuloihin kytketään läsnäoloanturit, turvareuna, rajakytkimet ja käyttöpainikkeet.', 'Lähtöihin kytketään moottorin ohjaus, jarru ja merkkivalot.', 'Ohjelmakierto lukee anturit ennen päätöstä: avaa, jos läsnäolo havaitaan eikä turvaehto estä liikettä.', 'Sulkemisen aikana turvareunan aktivoituminen keskeyttää liikkeen ja avaa oven.', 'HMI voi näyttää tilan ja hälytyksen, mutta varsinainen turvallinen ohjaus toimii kenttäyhteyden katketessakin.']],
+      questions: [
+        ['Mikä on PLC:n ohjelmakierron oikea järjestys?', ['ohjelma–lähdöt–tulot', 'tulot–ohjelma–lähdöt', 'lähdöt–tulot–sammutus', 'vain ohjelma'], 1, 'Päätös perustuu ensin luettuihin tuloihin.'],
+        ['Mikä erottaa SCADA:n tyypillisestä paikallisesta HMI:stä?', ['SCADA kattaa laajemman valvonnan ja tiedonkeruun', 'SCADA ei sisällä hälytyksiä', 'HMI on aina ERP', 'HMI ohjaa koko tehdasta aina'], 0, 'Vertaa yhden koneen näkymää koko prosessin valvontaan.'],
+        ['Mikä on hajautuksen hyöty?', ['kaapelointi ja yhden vian vaikutus voivat pienentyä', 'kaikki riippuu yhdestä laitteesta', 'I/O:t siirtyvät kauemmas kentältä', 'verkkoa ei tarvita'], 0, 'Ohjaimet ja I/O:t sijoitetaan lähelle prosessia.']
+      ]
+    },
+    {
+      id: 'auto-logic', label: 'Boolen logiikka', title: 'Totuustaulusta Ladder-ohjelmaksi',
+      lead: 'Boolen algebra käyttää arvoja 0 ja 1 loogisten ehtojen kuvaamiseen. AND, OR, NOT, NAND, NOR, XOR ja XNOR muodostavat digitaalisen ohjauksen perustan, ja samat rakenteet näkyvät PLC:n Ladder-ohjelmoinnissa.',
+      bullets: [
+        'Totuustaulussa n riippumatonta muuttujaa tuottaa 2ⁿ mahdollista tuloyhdistelmää.',
+        'AND vastaa sarjaan asetettuja ehtoja, OR rinnakkaisia vaihtoehtoja ja NOT normaalisti kiinni olevaa käänteistä ehtoa.',
+        'XOR on tosi, kun tulot eroavat; XNOR silloin, kun ne ovat samat.',
+        'De Morganin lait siirtävät negaation sulkujen sisään ja vaihtavat AND- sekä OR-operaatiot keskenään.',
+        'Sievennetty lauseke tarvitsee vähemmän portteja tai ohjelmakoodia, mikä parantaa luettavuutta, ylläpidettävyyttä ja usein luotettavuutta.'
+      ],
+      formulas: [['N = 2ⁿ', 'totuustaulun rivien määrä'], ['¬(A·B) = ¬A + ¬B', 'De Morgan: NAND-muoto'], ['¬(A+B) = ¬A·¬B', 'De Morgan: NOR-muoto']],
+      example: ['Lamppu syttyy S1- tai S2-painikkeesta, jos esto S3 ei ole aktiivinen', ['Muodosta käynnistysehto: S1 OR S2.', 'Muodosta salliva ehto: NOT S3.', 'Yhdistä ehdot AND-operaatiolla: H = (S1 + S2)·¬S3.', 'Ladderissa S1 ja S2 ovat rinnakkain, niiden jälkeen S3:n normaalisti kiinni oleva kosketin ja lopuksi H-kela.', 'Tarkista kaikki kahdeksan tuloyhdistelmää totuustaululla.']],
+      questions: [
+        ['Milloin AND on tosi?', ['kun yksi tulo on tosi', 'kun kaikki tulot ovat tosia', 'kun tulot eroavat', 'aina'], 1, 'AND vaatii kaikkien ehtojen täyttymisen.'],
+        ['Milloin XOR on tosi kahdella tulolla?', ['tulot ovat erisuuret', 'molemmat ovat 1', 'molemmat ovat 0', 'aina'], 0, 'XOR on poissulkeva TAI.'],
+        ['Mikä on ¬(A·B)?', ['¬A·¬B', '¬A+¬B', 'A+B', 'A XOR B'], 1, 'Käytä De Morganin lakia.']
+      ]
+    },
+    {
+      id: 'auto-pid', label: 'PI-kaaviot', title: 'Prosessin yhteinen tekninen kieli',
+      lead: 'Putkitus- ja instrumentointikaavio eli PI-kaavio esittää prosessin virtauksen, laitteet, putkistot, mittaukset, ohjaukset ja signaaliyhteydet standardoiduilla merkeillä. Se on automaatiosuunnittelun tärkeimpiä lähtötietodokumentteja.',
+      bullets: [
+        'PI-kaavion standardeja ovat esimerkiksi ISO 14617, ISO 10628 sekä PSK 3603 ja PSK 3605.',
+        'Instrumenttitunnuksen ensimmäinen kirjain kertoo mitattavan suureen: F virtaus, L pinnankorkeus, P paine ja T lämpötila.',
+        'Seuraavat kirjaimet kuvaavat toimintoa: I osoitus, T lähetys, C säätö, A hälytys, S kytkentä, V venttiili ja Z turvatoiminto.',
+        'Säätöpiiri yhdistää mittauksen, säätimen ja toimilaitteen. Esimerkiksi FT–FIC–FCV mittaa ja säätää virtausta.',
+        'Ajantasainen PI-kaavio tukee muutoksia, kunnossapitoa, vianhakua, riskien arviointia ja turvallista käyttöä.'
+      ],
+      formulas: [['FT = Flow Transmitter', 'virtauslähetin'], ['LIC = Level Indicating Controller', 'pinnankorkeutta osoittava säädin'], ['FCV = Flow Control Valve', 'virtausta säätävä venttiili']],
+      example: ['Säiliön pinnankorkeuden säätöpiiri', ['LT mittaa pinnankorkeuden ja lähettää signaalin automaatiojärjestelmään.', 'LIC näyttää mittauksen operaattorille ja vertaa sitä asetusarvoon.', 'Säädin muodostaa ohjaussignaalin tulovirtauksen venttiilille LCV.', 'Hälytys LAH varoittaa korkeasta pinnasta ja LAL matalasta pinnasta.', 'Kaavioon merkitään laitteiden yksilötunnukset sekä prosessi- ja signaaliyhteydet.']],
+      questions: [
+        ['Mitä ensimmäinen kirjain F tarkoittaa?', ['voimaa', 'virtausta', 'taajuutta aina', 'venttiiliä'], 1, 'PI-tunnuksessa ensimmäinen kirjain kertoo suureen.'],
+        ['Mitä FCV tarkoittaa?', ['virtaussäätöventtiiliä', 'paineanturia', 'lämpötilahälytystä', 'käsiventtiiliä'], 0, 'F = flow, C = control, V = valve.'],
+        ['Miksi PI-kaavio päivitetään as-built-muotoon?', ['jotta se vastaa toteutunutta järjestelmää', 'jotta testaus voidaan poistaa', 'vain värien vuoksi', 'jotta tunnukset häviävät'], 0, 'Kunnossapito tarvitsee todellisen nykytilan.']
+      ]
+    },
+    {
+      id: 'auto-measurement', label: 'Mittaustekniikka', title: 'Luotettava tieto prosessista',
+      lead: 'Mittaustekniikka muuttaa prosessin fysikaaliset ilmiöt käyttökelpoiseksi tiedoksi. Anturin valintaan vaikuttavat mittausalue, tarkkuus, dynamiikka, olosuhteet, asennus ja koko mittausketjun epävarmuus.',
+      bullets: [
+        'Kalibrointi selvittää mittalaitteen virheen referenssiin nähden. Viritys korjaa havaitun virheen mahdollisimman lähelle referenssiarvoa.',
+        'Pt100 on yleinen platinavastusanturi, jonka resistanssi on 100 Ω lämpötilassa 0 °C. Termopari tuottaa lämpötilaeroon perustuvan pienen jännitteen.',
+        'Hydrostaattinen paine p = ρgh mahdollistaa esimerkiksi avoimen säiliön pinnankorkeuden mittauksen.',
+        'Tilavuusvirta kertoo tilavuuden aikayksikössä ja massavirta massan aikayksikössä. Ne yhdistää tiheys qₘ = ρqᵥ.',
+        'Reynoldsin luku kuvaa virtauksen luonnetta. Kuristusmittauksessa paine-ero kasvaa likimain virtausnopeuden neliössä.'
+      ],
+      formulas: [['p = ρgh', 'hydrostaattinen paine'], ['qₘ = ρqᵥ', 'massa- ja tilavuusvirran yhteys'], ['Re = ρvd/μ', 'Reynoldsin luku'], ['p₂ = p₁ + ½ρv²', 'staattisen ja dynaamisen paineen yhteys ideaalitapauksessa']],
+      example: ['Pinnankorkeus paine-erolähettimellä', ['Avoimen säiliön yläpuolella vaikuttaa ilmakehän paine molemmilla puolilla mittausta ja se supistuu pois.', 'Pohjan ylipaine on p = ρgh.', 'Vedellä, h = 3,0 m ja ρ = 1000 kg/m³ saadaan p ≈ 29,4 kPa.', 'Lähetin skaalaa paineen esimerkiksi 4–20 mA -viestiksi.', 'Kalibroinnissa tarkistetaan sekä nolla että alue tunnettuja referenssipaineita vasten.']],
+      questions: [
+        ['Mitä kalibrointi tekee?', ['selvittää virheen referenssiin nähden', 'korjaa aina laitteen', 'poistaa kohinan', 'muuttaa analogisen digitaaliseksi'], 0, 'Kalibrointi ja viritys ovat eri asioita.'],
+        ['Mikä on Pt100:n resistanssi 0 °C:ssa?', ['0 Ω', '100 Ω', '273 Ω', '1000 Ω'], 1, 'Arvo sisältyy nimeen.'],
+        ['Mikä yhtälö kuvaa hydrostaattista painetta?', ['p = ρgh', 'p = UI', 'p = mv', 'p = 2ⁿ'], 0, 'Paine riippuu tiheydestä ja nestepatsaan korkeudesta.']
+      ]
+    },
+    {
+      id: 'auto-signals', label: 'Viestit ja AD/DA', title: 'Analogisesta mittauksesta digitaaliseksi dataksi',
+      lead: 'Automaation I/O voi olla analogista tai digitaalista. Analoginen mittaus muunnetaan digitaaliseen käsittelyyn suodattamalla, näytteistämällä, kvantisoimalla ja koodaamalla. Standardiviestit ja kenttäväylät siirtävät tiedon laitteiden välillä.',
+      bullets: [
+        'Analoginen signaali vaihtelee jatkuvasti, digitaalinen käyttää erillisiä tasoja. Digitaalinen kaksitilainen tieto on helppo erottaa kohinasta.',
+        'AD-muunnoksen vaiheet ovat alipäästösuodatus, näytteistys, kvantisointi ja binäärikoodaus. DA-muunnin tekee käänteisen muunnoksen.',
+        'n-bittinen muunnin tuottaa 2ⁿ kvantisointitasoa. Suurempi bittimäärä pienentää kvantisointiaskeleen kokoa.',
+        'Nyquistin ehdossa näytteenottotaajuus on vähintään kaksinkertainen korkeimpaan säilytettävään signaalitaajuuteen nähden.',
+        '4–20 mA -viestin 4 mA on elävä nolla. Kenttäväylässä sama kaapeli voi välittää useiden laitteiden mittaus-, tila-, hälytys- ja diagnostiikkatietoja.'
+      ],
+      formulas: [['N = 2ⁿ', 'AD-muuntimen kvantisointitasot'], ['Δx = mittausalue/2ⁿ', 'yhden kvantisointiaskeleen suuruus'], ['f_s ≥ 2f_max', 'Nyquistin näytteenottoehto'], ['M = (I−4)/16 · M_max', '0–M_max alueen skaalaus 4–20 mA -viestistä']],
+      example: ['0–100 °C lämpötila 8-bittisellä AD-muuntimella', ['Mittausalueen leveys on 100 °C.', '8 bittiä antaa 2⁸ = 256 kvantisointitasoa.', 'Yksi askel on 100/256 ≈ 0,39 °C.', 'Ennen näytteenottoa analoginen alipäästösuodatin poistaa kaistan ulkopuoliset taajuudet.', 'Jos lämpötila siirretään 4–20 mA -viestinä, 12 mA vastaa 50 % aluetta eli 50 °C.']],
+      questions: [
+        ['Mitä 4 mA tarkoittaa normaalissa 4–20 mA -viestissä?', ['0 % mittausaluetta', '25 % mittausaluetta', '100 % mittausaluetta', 'aina kaapelivikaa'], 0, 'Kyseessä on elävä nolla.'],
+        ['Kuinka monta tasoa 8 bittiä tuottaa?', ['8', '64', '128', '256'], 3, 'Laske 2⁸.'],
+        ['Miksi anti-alias-suodatin on ennen AD-muunninta?', ['se estää liian korkeiden taajuuksien laskostumista', 'se kasvattaa bittimäärää', 'se tekee DA-muunnoksen', 'se muuttaa 4 mA arvoksi 20 mA'], 0, 'Laskostuminen syntyy näytteenotossa.']
+      ]
+    }
+  ]);
   var theoryState = { active: 0 };
 
   function renderTheory() {
@@ -846,6 +1167,50 @@
         card.querySelector('.theory-feedback').textContent = (chosen === question[2] ? 'Oikein. ' : 'Ei aivan. ') + question[3];
       });
     });
+  }
+
+  function renderAutomationModules() {
+    var descriptions = {
+      'auto-project': 'Vaatimukset, suunnittelu, toteutus, FAT, asennus, SAT, käyttöönotto ja kunnossapito.',
+      'auto-systems': 'Automaatiopyramidi, I/O, PLC:n ohjelmakierto, HMI, SCADA, MES, ERP ja hajautettu DCS.',
+      'auto-logic': 'Perusportit, totuustaulut, De Morganin lait, sievennys ja Ladder-ohjelmointi.',
+      'auto-pid': 'P&ID:n tarkoitus, standardit, instrumenttitunnukset, laitteet ja säätöpiirit.',
+      'auto-measurement': 'Kalibrointi, lämpötila, paine, virtaus, pinnankorkeus ja mittausepävarmuus.',
+      'auto-signals': 'Analoginen ja digitaalinen I/O, AD/DA, 4–20 mA, Nyquist ja kenttäväylät.'
+    };
+    byId('automationModuleGrid').innerHTML = automationTopics.map(function (topic, index) {
+      return '<article class="automation-module-card"><span>0' + (index + 1) + ' / ' + topics[topic].name.toLocaleUpperCase('fi-FI') + '</span><h3>' + theoryPackages[automationTheoryStart + index].title + '</h3><p>' + descriptions[topic] + '</p><button type="button" data-auto-theory="' + index + '">Avaa teoriapaketti →</button></article>';
+    }).join('');
+    document.querySelectorAll('[data-auto-theory]').forEach(function (button) { button.addEventListener('click', function () {
+      theoryState.active = automationTheoryStart + Number(button.dataset.autoTheory);
+      showView('theory');
+      renderTheory();
+    }); });
+  }
+
+  function updateAutomationSummary() {
+    var ratio = ({ theory: .75, calculation: .25, mixed: .5 })[autoExamConfig.mix];
+    var theoryCount = Math.round(autoExamConfig.length * ratio);
+    var labels = { theory: 'Teoriakeskeinen', calculation: 'Laskennalliskeskeinen', mixed: 'Sekoitus' };
+    byId('autoSummaryName').textContent = labels[autoExamConfig.mix] + ' · ' + difficultyNames[autoExamConfig.difficulty].toLocaleLowerCase('fi-FI');
+    byId('autoSummaryCount').textContent = autoExamConfig.length;
+    byId('autoSummaryTheory').textContent = theoryCount;
+    byId('autoSummaryCalculation').textContent = autoExamConfig.length - theoryCount;
+    byId('autoSummaryTimer').textContent = autoExamConfig.timer && autoExamConfig.length > 8 ? (autoExamConfig.length === 15 ? '55 min' : '120 min') : 'Ei';
+    byId('autoTimerOption').classList.toggle('hidden', autoExamConfig.length <= 8);
+    byId('autoTimerCopy').textContent = autoExamConfig.length === 15 ? '55 minuuttia' : '2 tuntia';
+  }
+
+  function startAutomationExam() {
+    config.mode = 'automation';
+    config.length = autoExamConfig.length;
+    config.difficulty = autoExamConfig.difficulty;
+    config.timer = autoExamConfig.timer && autoExamConfig.length > 8;
+    config.selected = automationTopics.slice();
+    config.weighted = [];
+    config.automationMix = autoExamConfig.mix;
+    showView('practice');
+    startSession();
   }
 
   function renderDomains() {
@@ -945,7 +1310,7 @@
       });
       return { questions: reviewQuestions, index: 0, answers: [], score: 0, maxPoints: reviewQuestions.reduce(function (sum, q) { return sum + (q.type === 'mcq' ? 2 : 3); }, 0), timeLeft: null, config: JSON.parse(JSON.stringify(config)) };
     }
-    var count = (config.mode === 'exam' || config.mode === 'weekly2') ? config.length : 10;
+    var count = (config.mode === 'exam' || config.mode === 'weekly2' || config.mode === 'automation') ? config.length : 10;
     var mcqCount = config.mode === 'practice' ? 5 : ({ 8: 8, 15: 5, 25: 6, 30: 6, 50: 10 }[count]);
     var specs;
     if (config.mode === 'weekly2') {
@@ -953,6 +1318,10 @@
       specs = shuffle(Array(theoryCount).fill(null).map(function () { return { type: 'mcq', category: 'theory' }; })
         .concat(Array(calculationMcqCount).fill(null).map(function () { return { type: 'mcq', category: 'calculation' }; }))
         .concat(Array(count - mcqCount).fill(null).map(function () { return { type: 'open', category: 'calculation' }; })));
+    } else if (config.mode === 'automation') {
+      var autoTheoryCount = Math.round(count * ({ theory: .75, calculation: .25, mixed: .5 })[config.automationMix]);
+      specs = shuffle(Array(autoTheoryCount).fill(null).map(function () { return { type: 'mcq', category: 'theory' }; })
+        .concat(Array(count - autoTheoryCount).fill(null).map(function () { return { type: count === 8 ? 'mcq' : 'open', category: 'calculation' }; })));
     } else specs = shuffle(Array(mcqCount).fill('mcq').concat(Array(count - mcqCount).fill('open'))).map(function (type) { return { type: type, category: null }; });
     var pool = [];
     config.selected.forEach(function (id) { pool.push(id); if (config.weighted.indexOf(id) !== -1) pool.push(id, id); });
@@ -1188,7 +1557,7 @@
     if (!session) return;
     session.usedFormula = true; updatePointPreview();
     recordFeature('formulaBank');
-    if (session.config.mode === 'exam' || session.config.mode === 'weekly2') recordFeature('formulaDuringExam');
+    if (session.config.mode === 'exam' || session.config.mode === 'weekly2' || session.config.mode === 'automation') recordFeature('formulaDuringExam');
     var q = session.questions[session.index];
     var relevant = formulas.filter(function (f) { return f.topic === q.topic; });
     if (!relevant.length) relevant = formulas.filter(function (f) { return topics[f.topic].domain === topics[q.topic].domain; });
@@ -1344,6 +1713,12 @@
 
   function bind() {
     document.querySelectorAll('[data-view], [data-view-link]').forEach(function (el) { el.addEventListener('click', function (e) { e.preventDefault(); showView(el.dataset.view || el.dataset.viewLink); }); });
+    document.querySelectorAll('[data-auto-scroll]').forEach(function (button) { button.addEventListener('click', function () { byId(button.dataset.autoScroll).scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
+    document.querySelectorAll('[data-auto-mix]').forEach(function (button) { button.addEventListener('click', function () { autoExamConfig.mix = button.dataset.autoMix; document.querySelectorAll('[data-auto-mix]').forEach(function (b) { b.classList.toggle('selected', b === button); }); updateAutomationSummary(); }); });
+    document.querySelectorAll('[data-auto-difficulty]').forEach(function (button) { button.addEventListener('click', function () { autoExamConfig.difficulty = button.dataset.autoDifficulty; document.querySelectorAll('[data-auto-difficulty]').forEach(function (b) { b.classList.toggle('selected', b === button); }); updateAutomationSummary(); }); });
+    document.querySelectorAll('[data-auto-length]').forEach(function (button) { button.addEventListener('click', function () { autoExamConfig.length = Number(button.dataset.autoLength); if (autoExamConfig.length === 30) { autoExamConfig.difficulty = 'extreme'; document.querySelectorAll('[data-auto-difficulty]').forEach(function (b) { b.classList.toggle('selected', b.dataset.autoDifficulty === 'extreme'); }); } autoExamConfig.timer = false; byId('autoTimerEnabled').checked = false; document.querySelectorAll('[data-auto-length]').forEach(function (b) { b.classList.toggle('selected', b === button); }); updateAutomationSummary(); }); });
+    byId('autoTimerEnabled').addEventListener('change', function () { autoExamConfig.timer = this.checked; updateAutomationSummary(); });
+    byId('startAutomationExam').addEventListener('click', startAutomationExam);
     byId('openAchievements').addEventListener('click', openAchievements);
     byId('closeAchievements').addEventListener('click', closeAchievements);
     byId('achievementBackdrop').addEventListener('click', closeAchievements);
@@ -1395,6 +1770,6 @@
     byId('hangForm').addEventListener('submit', function (e) { e.preventDefault(); guessHangman(byId('hangInput').value); });
   }
 
-  renderDomains(); renderTopics(); renderTheory(); bind(); updateSummary(); renderFlashcards(true); renderFormulaBank(); renderMemory(); startHangmanRound(); initializeAchievements();
+  renderDomains(); renderTopics(); renderTheory(); renderAutomationModules(); bind(); updateSummary(); updateAutomationSummary(); renderFlashcards(true); renderFormulaBank(); renderMemory(); startHangmanRound(); initializeAchievements();
 }());
 
